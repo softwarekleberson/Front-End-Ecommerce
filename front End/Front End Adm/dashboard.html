@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <!-- Importing TailwindCSS for responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS for specific elements like simulated chart bars */
+        .chart-bar {
+            height: 20px;
+            background: linear-gradient(to right, #3b82f6, #1e40af);
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+
+        .sales-table th,
+        .sales-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .sales-table th {
+            background: #f3f4f6;
+            font-weight: bold;
+        }
+
+        .metric-card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Header with title and banner image -->
+    <header class="bg-blue-600 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between flex-wrap">
+            <h1 class="text-2xl font-bold">Dashboard Sellers</h1>
+            <!-- Placeholder logo image with detailed alt text -->
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1fa136ba-2756-48ca-bcff-fe073ea33f20.png"
+                alt="Modern business logo with a blue and white sales chart icon, representing growth and analytics"
+                class="h-12 w-auto rounded" />
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="container mx-auto p-6">
+        <!-- Key metrics -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="metric-card bg-white p-6 text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Total Sales</h3>
+                <p class="text-3xl font-bold text-blue-600 mt-2">R$ 125,000</p>
+                <p class="text-green-500 text-sm">+12% compared to last month</p>
+            </div>
+            <div class="metric-card bg-white p-6 text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Orders</h3>
+                <p class="text-3xl font-bold text-green-600 mt-2">1,250</p>
+                <p class="text-green-500 text-sm">+8% since last quarter</p>
+            </div>
+            <div class="metric-card bg-white p-6 text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Active Customers</h3>
+                <p class="text-3xl font-bold text-purple-600 mt-2">850</p>
+                <p class="text-green-500 text-sm">+5% new engagement</p>
+            </div>
+            <div class="metric-card bg-white p-6 text-center">
+                <h3 class="text-lg font-semibold text-gray-700">Conversion</h3>
+                <p class="text-3xl font-bold text-red-600 mt-2">4.2%</p>
+                <p class="text-green-500 text-sm">+1.5% improvement</p>
+            </div>
+        </section>
+
+        <!-- Simulated monthly sales chart -->
+        <section class="bg-white p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Sales (Simulation)</h2>
+            <div class="grid grid-cols-12 gap-2">
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Jan</p>
+                    <div class="chart-bar mt-2" style="width: 40%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Feb</p>
+                    <div class="chart-bar mt-2" style="width: 55%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Mar</p>
+                    <div class="chart-bar mt-2" style="width: 70%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Apr</p>
+                    <div class="chart-bar mt-2" style="width: 80%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">May</p>
+                    <div class="chart-bar mt-2" style="width: 90%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Jun</p>
+                    <div class="chart-bar mt-2" style="width: 95%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Jul</p>
+                    <div class="chart-bar mt-2" style="width: 85%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Aug</p>
+                    <div class="chart-bar mt-2" style="width: 75%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Sep</p>
+                    <div class="chart-bar mt-2" style="width: 60%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Oct</p>
+                    <div class="chart-bar mt-2" style="width: 50%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Nov</p>
+                    <div class="chart-bar mt-2" style="width: 45%;"></div>
+                </div>
+                <div class="col-span-1">
+                    <p class="text-sm font-medium">Dec</p>
+                    <div class="chart-bar mt-2" style="width: 55%;"></div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-500 mt-4">Note: This is a simulated CSS chart. For real projects, use libraries like Chart.js for dynamic data.</p>
+        </section>
+
+        <!-- Recent transactions table -->
+        <section class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
+            <table class="sales-table w-full">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10/15/2023</td>
+                        <td>João Silva</td>
+                        <td>Gaming Laptop</td>
+                        <td>R$ 5,000</td>
+                        <td class="text-green-500 font-semibold">Completed</td>
+                    </tr>
+                    <tr>
+                        <td>10/14/2023</td>
+                        <td>Maria Oliveira</td>
+                        <td>Smartphone</td>
+                        <td>R$ 3,200</td>
+                        <td class="text-yellow-500 font-semibold">In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>10/13/2023</td>
+                        <td>Carlos Santos</td>
+                        <td>Headphones</td>
+                        <td>R$ 800</td>
+                        <td class="text-green-500 font-semibold">Completed</td>
+                    </tr>
+                    <tr>
+                        <td>10/12/2023</td>
+                        <td>Ana Costa</td>
+                        <td>Tablet</td>
+                        <td>R$ 2,500</td>
+                        <td class="text-red-500 font-semibold">Cancelled</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Simple footer -->
+    <footer class="bg-gray-800 text-white text-center p-4 mt-8">
+        <p>Hatchards.</p>
+    </footer>
+</body>
+
+</html>

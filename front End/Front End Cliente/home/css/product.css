@@ -1,0 +1,115 @@
+/* Container principal para os cards */
+#books-container,
+#bags-container {
+  display: flex;
+  flex-wrap: nowrap;
+  /* para manter linha única e permitir scroll horizontal se quiser */
+  gap: 16px;
+  /* espaçamento entre cards */
+  overflow-x: auto;
+  /* barra de rolagem horizontal se necessário */
+  padding: 8px 0;
+  margin-left: 7rem;
+  margin-top: 3rem;
+}
+
+/* Estilização dos cards */
+.card {
+  flex: 0 0 auto;
+  /* mantém tamanho fixo no flexbox */
+  width: 200px;
+  /* largura fixa para uniformizar */
+  background-color: #fff;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Imagem dentro do card */
+.card__image {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* Título */
+.card__title {
+  font-weight: 600;
+  font-size: 12px;
+  color: #000;
+  margin: 0 0 6px 0;
+  min-height: 40px;
+  /* para alinhar cards com títulos maiores */
+}
+
+/* Meta informação (autor/marca) */
+.card__meta {
+  font-size: 12px;
+  color: #555;
+  margin: 0 0 8px 0;
+  min-height: 16px;
+}
+
+/* Preço */
+.card__price {
+  font-weight: 700;
+  font-size: 12px;
+  color: #29473D;
+  margin-bottom: 8px;
+}
+
+
+/* Descrição (removível se preferir menos texto no card) */
+.card__desc {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  /* opcional: limitar linhas */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botões de ação - pode ocultar se não quiser na visualização */
+.card__actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Botões */
+.btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+#books-container,
+#bags-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 8px 0;
+  margin-left: 7rem;
+  margin-top: 3rem;
+}

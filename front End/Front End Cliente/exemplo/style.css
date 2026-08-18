@@ -1,0 +1,128 @@
+/* Estilos Gerais */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+    color: #111;
+    margin: 20px;
+}
+
+.order-card {
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    max-width: 900px;
+    margin-bottom: 20px;
+    overflow: hidden; /* Garante que o header cinza respeite o border-radius */
+}
+
+/* Cabeçalho do Card (Barra Cinza) */
+.order-header {
+    background-color: #f0f2f2;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #d5d9d9;
+    font-size: 12px;
+}
+
+.info-group {
+    margin-right: 25px;
+}
+
+.info-group span {
+    color: #565959;
+    display: block;
+    text-transform: uppercase;
+}
+
+.info-group p {
+    margin: 3px 0 0;
+    font-weight: 500;
+}
+
+.order-id {
+    text-align: right;
+    flex-grow: 1;
+}
+
+/* Corpo do Card */
+.order-body {
+    padding: 18px;
+    display: flex;
+    gap: 20px;
+}
+
+.product-content {
+    flex: 3;
+}
+
+.product-content h3 {
+    font-size: 18px;
+    margin: 0 0 5px 0;
+}
+
+.product-detail {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.product-detail img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+.product-text a {
+    color: #007185;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.product-text a:hover {
+    color: #c7511f;
+    text-decoration: underline;
+}
+
+/* Coluna de Botões (Ações) */
+.order-actions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Estilização dos Botões */
+button {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid #d5d9d9;
+    box-shadow: 0 2px 5px rgba(213, 217, 217, 0.5);
+    transition: background 0.2s;
+}
+
+.btn-yellow {
+    background-color: #ffd814;
+    border-color: #fcd200;
+}
+
+.btn-yellow:hover {
+    background-color: #f7ca00;
+}
+
+.btn-white {
+    background-color: #fff;
+    width: 100%;
+}
+
+.btn-white:hover {
+    background-color: #f7fafa;
+}
+
+/* Links em azul/ciano padrão */
+.link {
+    color: #007185;
+    cursor: pointer;
+}

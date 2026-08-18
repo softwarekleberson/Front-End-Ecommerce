@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="/css-global/form/css-global.css">
+    <title>New Billing Address</title>
+</head>
+
+<body>
+    <form id="form">
+        <fieldset>
+            <legend>Add New Billing Address</legend>
+
+            <div class="form-group">
+                <label for="main">Main</label>
+                <select name="main" id="main" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="receiver">Receiver</label>
+                <input type="text" name="receiver" id="receiver" autocomplete="name" required
+                    placeholder="Who will receive the billing">
+            </div>
+
+            <div class="form-group">
+                <label for="zipCode">Zip code</label>
+                <input type="text" id="zipCode" name="zipCode" placeholder="12345678" required autocomplete="on"
+                    pattern="\d{8}" onblur="buscarCEP()">
+            </div>
+
+            <div class="form-group">
+                <label for="typeResidence">Type Residence</label>
+                <input type="text" id="typeResidence" name="typeResidence"
+                    placeholder="House, Apartment, Commercial, Other" required autocomplete="on">
+            </div>
+
+            <div class="form-group">
+                <label for="streetType">Street Type</label>
+                <input type="text" id="streetType" name="streetType"
+                    placeholder="Street, Avenue, Streetway, Highway, Other" required autocomplete="on">
+            </div>
+
+            <div class="form-group">
+                <label for="street">Street Name</label>
+                <input type="text" id="street" name="street"
+                    placeholder="e.g. Flower Street, Central Avenue, Liberty Square" required autocomplete="on">
+            </div>
+
+            <div class="form-group">
+                <label for="number">Number</label>
+                <input type="text" id="number" name="number" placeholder="Enter the property number" inputmode="numeric"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="neighborhood">Neighborhood</label>
+                <input type="text" id="neighborhood" name="neighborhood" placeholder="Enter the neighborhood name"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="observation">Additional Info</label>
+                <textarea id="observation" name="observation"
+                    placeholder="Add delivery instructions (optional)"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" placeholder="Enter your city" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <input type="text" id="state" name="state" placeholder="Sp" required value="Sp">
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" id="country" name="country" placeholder="Enter your country" required value="Brazil">
+            </div>
+
+            <button type="submit">Save</button>
+            <button type="reset">Clear</button>
+        </fieldset>
+    </form>
+
+    <script src="/address/charge/js/create-charge.js"></script>
+    <script src="/address/cep/findByCep.js"></script>
+</body>
+
+</html>

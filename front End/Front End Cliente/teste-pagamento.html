@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Pagamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            margin: 0 0 10px 0;
+            color: #007bff;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover { background: #0056b3; }
+        .output {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        input, select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Integração de Pagamento</h1>
+        
+        <div class="test-section">
+            <h3>1. Teste de Conectividade</h3>
+            <p>Verifica se o backend está acessível</p>
+            <button onclick="testConnectivity()">Testar Conexão com Backend</button>
+            <div id="connectivityOutput" class="output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Teste de Pagamento com 1 Cartão</h3>
+            <input type="text" id="testToken" placeholder="Token JWT (opcional - simula)" value="">
+            <input type="text" id="testCardId" placeholder="ID do Cartão" value="card_123">
+            <input type="number" id="testAmount" placeholder="Valor" value="100.50" step="0.01">
+            <button onclick="testSingleCardPayment()">Enviar Pagamento (1 Cartão)</button>
+            <div id="singleCardOutput" class="output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Teste de Pagamento com 2 Cartões</h3>
+            <input type="text" id="testCardId1" placeholder="ID do Primeiro Cartão" value="card_001">
+            <input type="text" id="testCardId2" placeholder="ID do Segundo Cartão" value="card_002">
+            <input type="number" id="testAmount2" placeholder="Valor Total" value="100.00" step="0.01">
+            <input type="number" id="testPercentage" placeholder="Percentual (1º cartão)" value="30" min="1" max="99">
+            <button onclick="testTwoCardsPayment()">Enviar Pagamento (2 Cartões)</button>
+            <div id="twoCardsOutput" class="output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Teste de Pagamento com Cupom</h3>
+            <input type="text" id="testVoucherId" placeholder="ID do Voucher/Cupom" value="CUPOM123">
+            <button onclick="testVoucherPayment()">Enviar Pagamento (Voucher)</button>
+            <div id="voucherOutput" class="output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Teste de Pagamento com Cartão + Cupom</h3>
+            <input type="text" id="testCardIdVC" placeholder="ID do Cartão" value="card_456">
+            <input type="number" id="testAmountVC" placeholder="Valor" value="150.50" step="0.01">
+            <input type="text" id="testVoucherIdVC" placeholder="ID do Voucher/Cupom" value="CUPOM456">
+            <button onclick="testVoucherCardPayment()">Enviar Pagamento (Cartão + Cupom)</button>
+            <div id="voucherCardOutput" class="output"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Informações do LocalStorage</h3>
+            <button onclick="checkLocalStorage()">Verificar Token</button>
+            <div id="localStorageOutput" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        const PAYMENT_API_URL = 'http://localhost:8080/payment/checkout';
+
+        function log(message, type = 'info', elementId) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type;
+            const html = `<div class="${className}">[${timestamp}] ${message}</div>`;
+            element.innerHTML += html;
+            element.scrollTop = element.scrollHeight;
+        }
+
+        function clearOutput(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        async function testConnectivity() {
+            const elementId = 'connectivityOutput';
+            clearOutput(elementId);
+            log('Testando conectividade...', 'info', elementId);
+
+            try {
+                const response = await fetch(PAYMENT_API_URL, {
+                    method: 'OPTIONS'
+                });
+                
+                if (response.ok || response.status === 405) { // 405 é ok (method not allowed)
+                    log('✅ Backend está acessível', 'success', elementId);
+                } else {
+                    log(`⚠️ Status: ${response.status}`, 'info', elementId);
+                }
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error', elementId);
+                log('Verifique se o backend está rodando em http://localhost:8080', 'error', elementId);
+            }
+        }
+
+        async function testSingleCardPayment() {
+            const elementId = 'singleCardOutput';
+            clearOutput(elementId);
+            
+            const cardId = document.getElementById('testCardId').value;
+            const amount = parseFloat(document.getElementById('testAmount').value);
+            let token = document.getElementById('testToken').value;
+
+            if (!cardId || !amount) {
+                log('❌ Preencha todos os campos', 'error', elementId);
+                return;
+            }
+
+            if (!token) {
+                token = localStorage.getItem('token');
+            }
+
+            const payload = {
+                typePayment: 'CARD',
+                numberCardOne: cardId,
+                amountCardOne: amount
+            };
+
+            log(`Enviando requisição...`, 'info', elementId);
+            log(`Payload: ${JSON.stringify(payload, null, 2)}`, 'info', elementId);
+
+            try {
+                const response = await fetch(PAYMENT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` })
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.text();
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error', elementId);
+                log(`Resposta: ${data}`, response.ok ? 'success' : 'error', elementId);
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error', elementId);
+            }
+        }
+
+        async function testTwoCardsPayment() {
+            const elementId = 'twoCardsOutput';
+            clearOutput(elementId);
+            
+            const cardId1 = document.getElementById('testCardId1').value;
+            const cardId2 = document.getElementById('testCardId2').value;
+            const totalAmount = parseFloat(document.getElementById('testAmount2').value);
+            const percentage = parseInt(document.getElementById('testPercentage').value);
+
+            if (!cardId1 || !cardId2 || !totalAmount || !percentage) {
+                log('❌ Preencha todos os campos', 'error', elementId);
+                return;
+            }
+
+            const paymentCard1 = parseFloat((totalAmount * (100 - percentage) / 100).toFixed(2));
+            const paymentCard2 = parseFloat((totalAmount - paymentCard1).toFixed(2));
+
+            const payload = {
+                typePayment: 'TWO_CARDS',
+                numberCardOne: cardId1,
+                amountCardOne: paymentCard1,
+                numberCardTwo: cardId2,
+                amountCardTwo: paymentCard2
+            };
+
+            log(`Enviando requisição...`, 'info', elementId);
+            log(`Cartão 1 (${100 - percentage}%): R$ ${paymentCard1}`, 'info', elementId);
+            log(`Cartão 2 (${percentage}%): R$ ${paymentCard2}`, 'info', elementId);
+            log(`Total: R$ ${paymentCard1 + paymentCard2}`, 'info', elementId);
+            log(`Payload: ${JSON.stringify(payload, null, 2)}`, 'info', elementId);
+
+            try {
+                const response = await fetch(PAYMENT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || 'test-token'}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.text();
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error', elementId);
+                log(`Resposta: ${data}`, response.ok ? 'success' : 'error', elementId);
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error', elementId);
+            }
+        }
+
+        async function testVoucherPayment() {
+            const elementId = 'voucherOutput';
+            clearOutput(elementId);
+            
+            const voucherId = document.getElementById('testVoucherId').value;
+
+            if (!voucherId) {
+                log('❌ Preencha o campo de voucher', 'error', elementId);
+                return;
+            }
+
+            const payload = {
+                typePayment: 'VOUCHER',
+                voucherId: voucherId
+            };
+
+            log(`Enviando requisição...`, 'info', elementId);
+            log(`Payload: ${JSON.stringify(payload, null, 2)}`, 'info', elementId);
+
+            try {
+                const response = await fetch(PAYMENT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || 'test-token'}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.text();
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error', elementId);
+                log(`Resposta: ${data}`, response.ok ? 'success' : 'error', elementId);
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error', elementId);
+            }
+        }
+
+        async function testVoucherCardPayment() {
+            const elementId = 'voucherCardOutput';
+            clearOutput(elementId);
+            
+            const cardId = document.getElementById('testCardIdVC').value;
+            const amount = parseFloat(document.getElementById('testAmountVC').value);
+            const voucherId = document.getElementById('testVoucherIdVC').value;
+
+            if (!cardId || !amount || !voucherId) {
+                log('❌ Preencha todos os campos', 'error', elementId);
+                return;
+            }
+
+            const payload = {
+                typePayment: 'VOUCHER_CARD',
+                numberCardOne: cardId,
+                amountCardOne: amount,
+                voucherId: voucherId
+            };
+
+            log(`Enviando requisição...`, 'info', elementId);
+            log(`Payload: ${JSON.stringify(payload, null, 2)}`, 'info', elementId);
+
+            try {
+                const response = await fetch(PAYMENT_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || 'test-token'}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.text();
+                log(`Status: ${response.status}`, response.ok ? 'success' : 'error', elementId);
+                log(`Resposta: ${data}`, response.ok ? 'success' : 'error', elementId);
+            } catch (error) {
+                log(`❌ Erro: ${error.message}`, 'error', elementId);
+            }
+        }
+
+        function checkLocalStorage() {
+            const elementId = 'localStorageOutput';
+            clearOutput(elementId);
+            
+            const token = localStorage.getItem('token');
+            if (token) {
+                log(`✅ Token encontrado`, 'success', elementId);
+                log(`Token: ${token.substring(0, 50)}...`, 'info', elementId);
+            } else {
+                log(`⚠️ Nenhum token encontrado no localStorage`, 'info', elementId);
+                log(`Você precisa fazer login primeiro para usar o token de autenticação`, 'info', elementId);
+            }
+        }
+    </script>
+</body>
+</html>

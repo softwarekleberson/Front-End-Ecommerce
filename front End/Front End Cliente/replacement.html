@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <script src="https://kit.fontawesome.com/76a998f4ed.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css-global/reset-global/reset.css">
+    <link rel="stylesheet" href="/css-global/header/header.css">
+    <link rel="stylesheet" href="/css-global/main/main.css">
+    <link rel="stylesheet" href="orders/style.css">
+    <link rel="stylesheet" href="/css-global/footer/footer.css">
+    <link rel="stylesheet" href="/css-global/form/css-global.css">
+    <title>Replacement</title>
+    <style>
+        body {
+            display: block;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        #replacementForm {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 22px 24px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 18px;
+            color: #121212;
+            font-family: "Playfair Display", serif;
+            font-size: 26px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        #formStatus {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        button {
+            padding: 12px 14px;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-layote">
+            <div class="account">
+                <a href="login.html"><span>Login</span></a>
+                <a href="login.html"><i class="fa-solid fa-user"></i></a>
+            </div>
+
+            <div class="logo">
+                <a href="index.html"><span class="nome">Hatchards</span></a>
+                <span class="descricao">BEST BOOKS SINCE 1797</span>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Title, Author, Keyword, or ISBN">
+            </div>
+
+            <div class="bascket">
+                <a href="cart.html"><i class="fas fa-shopping-bag"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="links-home">
+        <a href="#">Rare Books</a>
+        <a href="#">Books</a>
+        <a href="#">Highlights</a>
+        <a href="#">Hatchards Publications</a>
+        <a href="#">Subscriptions</a>
+        <a href="#">Tote Bags</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Stationery & Gift Cards</a>
+        <a href="#">Events</a>
+        <a href="#">Our History</a>
+        <a href="home-customer.html">Accounts & Lists</a>
+    </div>
+
+    <hr class="linha-hr">
+
+    <div class="descricao-home">
+        <a href="#">Free delivery in Brazil for orders over R$25, otherwise R$2.99</a>
+    </div>
+
+    <main>
+        <form id="replacementForm" class="replacement-form">
+            <h1 class="page-title">Replacement Request</h1>
+
+            <div class="form-group">
+                <label for="reservationId">Reservation ID</label>
+                <input type="text" id="reservationId" name="reservationId" placeholder="Enter reservation ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">Reason</label>
+                <select id="reason" name="reason" required>
+                    <option value="">Select a reason</option>
+                    <option value="CHANGEOFMIND">Change of Mind</option>
+                    <option value="DEFECT">Defect</option>
+                    <option value="DIFFERENTITEM">Different Item</option>
+                    <option value="MISSINGITEM">Missing Item</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="explain">Explain</label>
+                <textarea id="explain" name="explain" placeholder="Describe the issue or reason for the request" required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Request</button>
+            <div id="formStatus" role="alert"></div>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-column">
+            <span>Shopping With Us</span>
+            <a href="#">Our Stores</a>
+            <a href="#">Our History</a>
+            <a href="#">Bookshop Services</a>
+            <a href="#">Hatchards Rewards</a>
+            <a href="#">Library Building Services</a>
+            <a href="#">Careers at Hatchards</a>
+        </div>
+        <div class="footer-column">
+            <span>Customer Service</span>
+            <a href="#">Contact Us</a>
+            <a href="#">Help</a>
+            <a href="#">Online Pricing</a>
+            <a href="#">Delivery & Returns</a>
+            <a href="#">Click & Collect</a>
+        </div>
+        <div class="footer-column">
+            <span>Legal</span>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Privacy Notice - How We Use Your Information</a>
+            <a href="#">Cookie Policy</a>
+            <a href="#">Manage Cookies</a>
+            <a href="#">EU General Product Safety Regulation (GPSR)</a>
+            <a href="#">Complaints Procedure</a>
+        </div>
+    </footer>
+
+    <script src="replacement/index.js"></script>
+</body>
+
+</html>

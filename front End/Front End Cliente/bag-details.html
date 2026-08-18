@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - Ecommerce</title>
+    <link rel="stylesheet" href="css-global/reset-global/reset.css">
+    <link rel="stylesheet" href="css-global/footer/footer.css">
+    <link rel="stylesheet" href="css-global/book/book.css">
+
+</head>
+
+<body>
+    <header>
+        <h1><a href="index.html">Hatchards</a>
+        </h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cart.html">Cart</a>
+        </nav>
+    </header>
+
+    <main class="product-detail">
+        <div class="product-image">
+            <img src="https://via.placeholder.com/500x500?text=Produto" alt="Imagem do Produto">
+        </div>
+        <div class="product-info">
+            <h2 id="name">Nome do Produto</h2>
+            <p class="description">Descrição detalhada do produto. Aqui você pode adicionar informações sobre
+                características, benefícios e especificações técnicas para convencer o cliente.</p>
+            <p class="price">R$ 99,99</p>
+
+            <button class="add-to-cart">Add to Cart</button>
+
+            <!-- Seção de Informações Detalhadas -->
+            <div class="product-details">
+                <div class="details-tabs">
+                    <button class="tab-button active" onclick="openTab(event, 'specs')">Specification</button>
+                    <button class="tab-button" onclick="openTab(event, 'features')">Features</button>
+                    <button class="tab-button" onclick="openTab(event, 'shipping')">Delivery</button>
+                </div>
+                <div id="specs" class="tab-content active">
+                    <ul class="specs">
+                        <li>
+                            <p id="color"></p>
+                        </li>
+                        <li>
+                            <p id="volume"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div id="features" class="tab-content">
+                    <h4>Features</h4>
+                    <p>Este produto é resistente à água, leve e confortável. Ideal para uso diário ou esportivo. Inclui
+                        acessórios extras como bolsa de transporte.</p>
+                </div>
+                <div id="shipping" class="tab-content">
+                    <h4>Delivery</h4>
+                    <p>Free delivery on orders over R$150. Delivery time: 3-5 business days. Tracking available.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="reviews">
+        <h3>Reviews</h3>
+        <div class="review">
+            <p><strong>João:</strong> Produto excelente, recomendo!</p>
+            <span>⭐⭐⭐⭐⭐</span>
+        </div>
+        <div class="review">
+            <p><strong>Maria:</strong> Chegou rápido e em perfeito estado.</p>
+            <span>⭐⭐⭐⭐</span>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-column">
+            <span>Shopping with Us</span>
+            <a href="#">Our Stores</a>
+            <a href="#">Our History</a>
+            <a href="#">Bookshop Services</a>
+            <a href="#">Hatchards Rewards</a>
+            <a href="#">Library Building Services</a>
+            <a href="#">Careers at Hatchards</a>
+        </div>
+        <div class="footer-column">
+            <span>Customer Service</span>
+            <a href="#">Contact Us</a>
+            <a href="#">Help</a>
+            <a href="#">Online Pricing</a>
+            <a href="#">Delivery & Returns</a>
+            <a href="#">Click & Collect</a>
+        </div>
+        <div class="footer-column">
+            <span>Legal</span>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Privacy Notice - How We Use Your Information</a>
+            <a href="#">Cookie Policy</a>
+            <a href="#">Manage Cookies</a>
+            <a href="#">EU General Product Safety Regulation (GPSR)</a>
+            <a href="#">Complaints Process</a>
+        </div>
+    </footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tabbuttons;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tabbuttons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabbuttons.length; i++) {
+                tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+
+<script src="details/js/bag/index.js"></script>
+<script src="details/js/cart/index-bag.js"></script>
+
+</html>

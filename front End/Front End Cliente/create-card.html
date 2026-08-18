@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="/css-global/form/css-global.css">
+    <title>Add New Card</title>
+</head>
+
+<body>
+
+    <form id="form" autocomplete="on">
+        <fieldset>
+            <legend>Register New Card</legend>
+
+            <div class="form-group">
+                <label for="main">Do You Want to Make This the Main Card?</label>
+                <input type="checkbox" name="main" id="main" checked>
+            </div>
+
+            <div class="form-group">
+                <label for="printedName">Name Printed on Card</label>
+                <input type="text" name="printedName" id="printedName" placeholder="Full Name Printed on Card"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="numberCard">Card Number</label>
+                <input type="text" name="numberCard" id="numberCard" placeholder="Enter the 16 digits of the card"
+                    inputmode="numeric" required>
+            </div>
+
+            <div class="form-group">
+                <label for="code">Security Code</label>
+                <input type="text" name="code" id="code" placeholder="CVV" pattern="\d{3}" maxlength="3"
+                    inputmode="numeric" required>
+            </div>
+
+            <div class="form-group">
+                <label for="expirationDate">Expiration Date</label>
+                <input type="date" name="expirationDate" id="expirationDate" placeholder="Card Expiration Date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="flag">Brand</label>
+                <select name="flag" id="flag" required>
+                    <option value="MASTERCARD" selected>Mastercard</option>
+                    <option value="VISA">Visa</option>
+                    <option value="ELO">Elo</option>
+                </select>
+                <small class="error-message"></small>
+            </div>
+
+            <button type="submit">Register</button>
+            <button type="reset">Clear</button>
+        </fieldset>
+    </form>
+
+    <script src="/card/js/create-card.js"></script>
+</body>
+
+</html>
