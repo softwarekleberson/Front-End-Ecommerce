@@ -105,10 +105,6 @@ function createOrderCard(order) {
     
     // Leitura do campo 'data' do ListOrdersDto
     const formattedDate = formatDate(order.data);
-    const orderReservationIds = (order.itens || [])
-        .map(item => item.reservationId || item.reservation_id || item.reservationid)
-        .filter(Boolean);
-    const primaryReservationId = orderReservationIds[0] || '';
     
     // Header da order
     const headerHTML = `
@@ -128,6 +124,7 @@ function createOrderCard(order) {
             <div class="order-id">
                 <span>ORDER # ${order.orderId}</span>
             </div>
+            <input type="hidden" name="customerId" class="customer-id" value="${order.customerId || ''}">
         </div>
     `;
     
@@ -146,6 +143,11 @@ function createOrderCard(order) {
                         <p><strong>Subtotal:</strong> ${formatCurrency(item.subtotal, order.currency)}</p>
                         <input type="hidden" class="reservation-id" value="${itemReservationId}" data-reservation-id="${itemReservationId}">
                     </div>
+                        <div class="order-actions">
+                            <button class="btn-white" type="button">Cancel Item</button>
+                            <button class="btn-white replacement-btn" type="button" data-reservation-id="${itemReservationId}" data-customer-id="${order.customerId || ''}" data-quantity="${item.quantity ?? ''}">Return or Replace Items</button>
+                            <button class="btn-white track-package-btn" type="button" data-order-id="${order.orderId}" data-reservation-id="${itemReservationId}">Track Package</button>
+                        </div>
                 </div>
             `;
         });
@@ -158,27 +160,34 @@ function createOrderCard(order) {
     const bodyHTML = `
         <div class="order-body">
             ${itemsHTML}
-            <div class="order-actions">
-                <button class="btn-white" type="button">Track Package</button>
-                <button class="btn-white replacement-btn" type="button" data-reservation-id="${primaryReservationId}">Return or Replace Items</button>
-                <button class="btn-white" type="button">Rate the Product</button>
-            </div>
         </div>
     `;
     
     card.innerHTML = headerHTML + bodyHTML;
 
-    const replacementButton = card.querySelector('.replacement-btn');
-
-    if (replacementButton) {
+    card.querySelectorAll('.replacement-btn').forEach((replacementButton) => {
         replacementButton.addEventListener('click', () => {
-            const reservationId = replacementButton.dataset.reservationId || card.querySelector('.reservation-id')?.value || '';
-            const targetUrl = reservationId
-                ? `replacement.html?reservationId=${encodeURIComponent(reservationId)}`
-                : 'replacement.html';
-            window.location.assign(targetUrl);
+            const reservationId = replacementButton.dataset.reservationId || '';
+            const orderCard = replacementButton.closest('.order-card');
+            const customerId = orderCard?.querySelector('.customer-id')?.value
+                || replacementButton.dataset.customerId
+                || '';
+            const quantity = replacementButton.dataset.quantity || '';
+            sessionStorage.setItem('replacementCustomerId', customerId);
+            sessionStorage.setItem('replacementQuantity', quantity);
+            window.location.assign(`replacement.html?reservationId=${encodeURIComponent(reservationId)}`);
         });
-    }
+    });
+
+    card.querySelectorAll('.track-package-btn').forEach((trackButton) => {
+        trackButton.addEventListener('click', () => {
+            const params = new URLSearchParams({
+                orderId: trackButton.dataset.orderId || '',
+                reservationId: trackButton.dataset.reservationId || ''
+            });
+            window.location.assign(`transport.html?${params.toString()}`);
+        });
+    });
 
     return card;
 }

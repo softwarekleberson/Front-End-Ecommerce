@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
       
       if (bagsContainer) {
-        bagsContainer.appendChild(bag); // Correção sutil: adicionando a 'card' criada, não o objeto 'bag'
+        bagsContainer.appendChild(card); // Corrigido: passando o elemento HTML 'card'
         card.querySelector('.btn-details').addEventListener('click', () => {
           window.location.href = `bag-details.html?id=${bag.id}`;
         });

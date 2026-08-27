@@ -108,7 +108,7 @@ async function negateReplacement(reservationId) {
 
         if (response.status === 401) {
             alert('Não autorizado. Faça login.');
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
             return;
         }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="/css-global/reset-global/reset.css">
     <link rel="stylesheet" href="/css-global/header/header.css">
     <link rel="stylesheet" href="/css-global/main/main.css">
+    <link rel="stylesheet" href="transport/style.css">
     <link rel="stylesheet" href="/css-global/footer/footer.css">
-    <title>Accounts and Lists</title>
+    <title>Transport</title>
 </head>
 
 <body>
-
     <header>
         <div class="header-layote">
             <div class="account">
@@ -57,64 +57,8 @@
         <a href="#">Free delivery in Brazil for orders over R$25, otherwise R$2.99</a>
     </div>
 
-    <main>
-        <section class="container">
-            <div>
-                <a href="update-customer.html">
-                    <h3>My Profile</h3>
-                    <p>Basic Information</p>
-                </a>
-            </div>
-            <div>
-                <a href="update-password.html">
-                    <h3>Change Password</h3>
-                    <p>Update Your Password</p>
-                </a>
-            </div>
-            <div>
-                <a href="list-deliveries.html">
-                    <h3>Delivery Addresses</h3>
-                    <p>Manage Delivery Addresses</p>
-                </a>
-            </div>
-            <div>
-                <a href="list-charges.html">
-                    <h3>Billing Addresses</h3>
-                    <p>Manage Billing Addresses</p>
-                </a>
-            </div>
-            <div>
-                <a href="list-card.html">
-                    <h3>Payment Methods</h3>
-                    <p>Manage Your Cards</p>
-                </a>
-            </div>
-            <div>
-                <a href="voucher.html">
-                    <h3>My Vouchers</h3>
-                    <p>Exchange & Return Vouchers</p>
-                </a>
-            </div>
-            <div>
-                <a href="orders.html">
-                    <h3>My Orders</h3>
-                    <p>Track Your Orders</p>
-                </a>
-            </div>
-            <div>
-                <a href="chat.html">
-                    <h3>IA</h3>
-                    <p>Tell Us About Your Interests!</p>
-                </a>
-            </div>
-            <div>
-                <a href="index.html" onclick="sair()">
-                    <h3>Log Out</h3>
-                    <p>See You Soon!</p>
-                </a>
-            </div>
-
-        </section>
+    <main id="transport-container">
+        <div class="transport-empty">Carregando o acompanhamento dos seus pedidos...</div>
     </main>
 
     <footer>
@@ -146,14 +90,7 @@
         </div>
     </footer>
 
+    <script src="transport/index.js"></script>
 </body>
-
-<script>
-    // Função para limpar localStorage ao sair
-    function sair() {
-        localStorage.clear();
-        alert("Nós vemos na próxima página");
-    }
-</script>
 
 </html>

@@ -7,6 +7,11 @@
     <link rel="shortcut icon" href="imagem/fiveicon.jpeg" type="image/x-icon">
     <link rel="stylesheet" href="index/style.css">
     <title>Admin Home</title>
+    <script>
+        if (!localStorage.getItem("token")) {
+            window.location.href = "login.html";
+        }
+    </script>
 </head>
 
 <body>

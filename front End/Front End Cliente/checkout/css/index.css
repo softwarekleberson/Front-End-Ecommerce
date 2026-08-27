@@ -270,6 +270,13 @@ body {
     margin-top: 16px;
 }
 
+.address-form > .input-label {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 20px;
+    text-align: center;
+}
+
 .products-list {
     border-bottom: 1px solid #e7e7e7;
 }

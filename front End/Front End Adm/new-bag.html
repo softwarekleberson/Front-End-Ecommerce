@@ -63,8 +63,8 @@
             </div>
 
             <div class="form-group">
-                <label for="pricing">Price:</label>
-                <input type="number" id="pricing" name="pricing" step="0.01" required>
+                <label for="pricing">Sales price percentage </label>
+                <input type="number" id="pricing" name="pricing" min="0" max="1" step="0.01" required>
             </div>
 
             <div class="form-group">
@@ -74,7 +74,7 @@
 
             <div class="form-group">
                 <label for="volume">Volume (L):</label>
-                <input type="number" id="volume" name="volume" step="0.1" required>
+                <input type="number" id="volume" name="volume" min="0" step="0.1" required>
             </div>
 
             <button type="submit">Submit</button>

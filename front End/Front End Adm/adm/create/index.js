@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch("http://localhost:8080/auth/adm", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    "Content-Type": "application/json"
+                    // Linha do Authorization removida aqui
                 },
                 body: JSON.stringify(admData)
             });

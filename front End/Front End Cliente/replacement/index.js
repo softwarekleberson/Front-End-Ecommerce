@@ -19,26 +19,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const reservationInput = document.getElementById('reservationId');
+    const customerIdInput = document.getElementById('customerId');
+    const quantityInput = document.getElementById('quantity');
     const params = new URLSearchParams(window.location.search);
     const reservationFromUrl = params.get('reservationId');
+    const purchasedQuantity = Number(sessionStorage.getItem('replacementQuantity'));
     if (reservationFromUrl && reservationInput) {
         reservationInput.value = reservationFromUrl;
+    }
+    if (customerIdInput) customerIdInput.value = sessionStorage.getItem('replacementCustomerId') || '';
+    if (quantityInput) {
+        quantityInput.value = Number.isInteger(purchasedQuantity) && purchasedQuantity > 0
+            ? purchasedQuantity
+            : '';
+        if (Number.isInteger(purchasedQuantity) && purchasedQuantity > 0) {
+            quantityInput.max = purchasedQuantity;
+        }
     }
 
     form?.addEventListener('submit', async (event) => {
         event.preventDefault();
 
         const reservationId = document.getElementById('reservationId')?.value.trim();
+        const customerId = customerIdInput?.value.trim();
+        const quantity = Number(quantityInput?.value);
         const reason = document.getElementById('reason')?.value;
         const explain = document.getElementById('explain')?.value.trim();
 
-        if (!reservationId || !reason || !explain) {
+        if (!reservationId || !customerId || !Number.isInteger(quantity) || quantity < 1 || !reason || !explain) {
             showStatus('Please fill in all fields before submitting.', true);
+            return;
+        }
+
+        if (Number.isInteger(purchasedQuantity) && quantity > purchasedQuantity) {
+            showStatus(`The replacement quantity cannot exceed the purchased quantity (${purchasedQuantity}).`, true);
             return;
         }
 
         const payload = {
             reservationId,
+            customerId,
+            quantity,
             reason,
             explain
         };

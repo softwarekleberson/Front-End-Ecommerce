@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!token) {
             alert("Authentication token not found. Please log in again.");
-            window.location.href = "/login.html";
+            window.location.href = "login.html";
             return;
         }
 

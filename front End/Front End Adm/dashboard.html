@@ -1,185 +1,215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Dashboard</title>
-    <!-- Importing TailwindCSS for responsive styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dashboard de vendas | Hatchards</title>
     <style>
-        /* Custom CSS for specific elements like simulated chart bars */
-        .chart-bar {
-            height: 20px;
-            background: linear-gradient(to right, #3b82f6, #1e40af);
-            border-radius: 5px;
-            transition: width 1s ease-in-out;
+        :root {
+            --ink: #17231f;
+            --muted: #71807a;
+            --line: #e3e9e5;
+            --paper: #f5f7f3;
+            --card: #ffffff;
+            --green: #24745a;
+            --green-light: #e6f1eb;
+            --orange: #d47742;
+            --shadow: 0 12px 34px rgba(31, 55, 43, .07);
         }
 
-        .sales-table th,
-        .sales-table td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid #e5e5e5;
-        }
-
-        .sales-table th {
-            background: #f3f4f6;
-            font-weight: bold;
-        }
-
-        .metric-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+        * { box-sizing: border-box; }
+        body { margin: 0; color: var(--ink); background: var(--paper); font-family: Georgia, 'Times New Roman', serif; }
+        button, input, select { font: inherit; }
+        .app-shell { display: flex; min-height: 100vh; }
+        .sidebar { width: 238px; padding: 30px 22px; color: #f7fbf7; background: #203d34; flex-shrink: 0; }
+        .brand { font-size: 25px; letter-spacing: -.8px; margin: 0 0 54px; }
+        .brand span { color: #edb67d; }
+        .nav-label { color: #9bb4a8; font: 11px Arial, sans-serif; letter-spacing: 1.5px; text-transform: uppercase; }
+        .nav { display: grid; gap: 9px; margin-top: 14px; }
+        .nav a { color: #c9d9d0; text-decoration: none; padding: 12px 14px; border-radius: 5px; font: 14px Arial, sans-serif; }
+        .nav a.active, .nav a:hover { color: #fff; background: rgba(255,255,255,.12); }
+        .sidebar-note { border-top: 1px solid rgba(255,255,255,.16); margin-top: 55px; padding-top: 18px; color: #a5bbb0; font: 12px/1.6 Arial, sans-serif; }
+        .content { width: 100%; min-width: 0; padding: 34px clamp(22px, 4vw, 58px); }
+        .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 28px; }
+        .eyebrow { margin: 0 0 8px; color: var(--orange); font: 11px Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+        h1 { font-size: clamp(29px, 3vw, 42px); font-weight: 400; letter-spacing: -1.5px; margin: 0; }
+        .period { color: var(--muted); font: 13px Arial, sans-serif; margin-top: 10px; }
+        .avatar { display: grid; place-items: center; width: 39px; height: 39px; color: #fff; background: var(--orange); border-radius: 50%; font: 13px Arial, sans-serif; }
+        .filters { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; padding: 18px; margin-bottom: 24px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .field { display: grid; gap: 7px; min-width: 150px; flex: 1; }
+        .field label { color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .8px; text-transform: uppercase; }
+        .field select, .field input { width: 100%; height: 39px; padding: 0 11px; color: var(--ink); background: #fbfcfa; border: 1px solid #d5dfd9; border-radius: 3px; outline: none; }
+        .field select:focus, .field input:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-light); }
+        .filter-actions { display: flex; gap: 9px; }
+        .button { height: 39px; padding: 0 18px; border: 0; border-radius: 3px; cursor: pointer; font: 12px Arial, sans-serif; }
+        .button-primary { color: #fff; background: var(--green); }
+        .button-primary:hover { background: #1b5e48; }
+        .button-quiet { color: var(--muted); background: transparent; border: 1px solid #d5dfd9; }
+        .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        .metric { padding: 20px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .metric-label { color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .8px; text-transform: uppercase; }
+        .metric-value { margin: 10px 0 7px; font-size: 28px; letter-spacing: -.8px; }
+        .metric-change { color: var(--green); font: 12px Arial, sans-serif; }
+        .grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(260px, .8fr); gap: 24px; }
+        .panel { padding: 24px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
+        .panel-heading { display: flex; justify-content: space-between; align-items: start; gap: 14px; margin-bottom: 22px; }
+        h2 { margin: 0; font-size: 20px; font-weight: 400; }
+        .panel-subtitle { color: var(--muted); font: 12px Arial, sans-serif; margin-top: 5px; }
+        .legend { color: var(--green); font: 12px Arial, sans-serif; white-space: nowrap; }
+        .legend::before { display: inline-block; width: 9px; height: 9px; margin-right: 6px; background: var(--green); border-radius: 50%; content: ''; }
+        .chart-wrap { position: relative; height: 286px; }
+        .chart-wrap svg { width: 100%; height: 245px; overflow: visible; }
+        .grid-line { stroke: #e8eeea; stroke-width: 1; }
+        .chart-area { fill: url(#areaFill); }
+        .chart-line { fill: none; stroke: var(--green); stroke-linecap: round; stroke-linejoin: round; stroke-width: 3; }
+        .chart-dot { fill: #fff; stroke: var(--green); stroke-width: 2; }
+        .y-label, .x-label { fill: #91a098; font: 11px Arial, sans-serif; }
+        .x-label { text-anchor: middle; }
+        .empty-chart { display: none; color: var(--muted); text-align: center; font: 13px Arial, sans-serif; padding-top: 110px; }
+        .category-row { padding: 15px 0; border-bottom: 1px solid var(--line); }
+        .category-row:last-child { border-bottom: 0; }
+        .category-top { display: flex; justify-content: space-between; gap: 12px; font: 13px Arial, sans-serif; }
+        .category-top strong { font-weight: 500; }
+        .category-top span { color: var(--muted); }
+        .progress { height: 6px; margin-top: 10px; overflow: hidden; background: #edf1ee; border-radius: 5px; }
+        .progress span { display: block; height: 100%; background: var(--orange); border-radius: 5px; }
+        .table-panel { margin-top: 24px; }
+        table { width: 100%; border-collapse: collapse; font: 13px Arial, sans-serif; }
+        th, td { padding: 14px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+        th { color: var(--muted); font-size: 10px; letter-spacing: .8px; text-transform: uppercase; }
+        td:last-child, th:last-child { text-align: right; }
+        .status { color: var(--green); }
+        @media (max-width: 900px) { .sidebar { width: 190px; } .metrics { grid-template-columns: repeat(2, 1fr); } .grid { grid-template-columns: 1fr; } }
+        @media (max-width: 620px) { .app-shell { display: block; } .sidebar { width: 100%; padding: 20px; } .brand { margin-bottom: 20px; } .nav { display: flex; overflow-x: auto; margin-top: 10px; } .nav-label, .sidebar-note { display: none; } .content { padding: 26px 16px; } .topbar { margin-bottom: 22px; } .filters { display: grid; grid-template-columns: 1fr 1fr; } .field { min-width: 0; } .filter-actions { grid-column: 1 / -1; } .filter-actions .button { flex: 1; } .metrics { gap: 10px; } .metric { padding: 15px; } .metric-value { font-size: 23px; } .panel { padding: 18px 14px; } table { min-width: 520px; } .table-panel { overflow-x: auto; } }
     </style>
 </head>
 
-<body class="bg-gray-50 font-sans">
-    <!-- Header with title and banner image -->
-    <header class="bg-blue-600 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex items-center justify-between flex-wrap">
-            <h1 class="text-2xl font-bold">Dashboard Sellers</h1>
-            <!-- Placeholder logo image with detailed alt text -->
-            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1fa136ba-2756-48ca-bcff-fe073ea33f20.png"
-                alt="Modern business logo with a blue and white sales chart icon, representing growth and analytics"
-                class="h-12 w-auto rounded" />
-        </div>
-    </header>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <p class="brand">Hatchards<span>.</span></p>
+            <span class="nav-label">Menu principal</span>
+            <nav class="nav" aria-label="Menu principal">
+                <a class="active" href="dashboard.html">Visão geral</a>
+                <a href="list-orders.html">Pedidos</a>
+                <a href="stock.html">Estoque</a>
+                <a href="list-customer.html">Clientes</a>
+            </nav>
+            <p class="sidebar-note">Painel administrativo<br>Atualizado em tempo real</p>
+        </aside>
 
-    <!-- Main content -->
-    <main class="container mx-auto p-6">
-        <!-- Key metrics -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="metric-card bg-white p-6 text-center">
-                <h3 class="text-lg font-semibold text-gray-700">Total Sales</h3>
-                <p class="text-3xl font-bold text-blue-600 mt-2">R$ 125,000</p>
-                <p class="text-green-500 text-sm">+12% compared to last month</p>
-            </div>
-            <div class="metric-card bg-white p-6 text-center">
-                <h3 class="text-lg font-semibold text-gray-700">Orders</h3>
-                <p class="text-3xl font-bold text-green-600 mt-2">1,250</p>
-                <p class="text-green-500 text-sm">+8% since last quarter</p>
-            </div>
-            <div class="metric-card bg-white p-6 text-center">
-                <h3 class="text-lg font-semibold text-gray-700">Active Customers</h3>
-                <p class="text-3xl font-bold text-purple-600 mt-2">850</p>
-                <p class="text-green-500 text-sm">+5% new engagement</p>
-            </div>
-            <div class="metric-card bg-white p-6 text-center">
-                <h3 class="text-lg font-semibold text-gray-700">Conversion</h3>
-                <p class="text-3xl font-bold text-red-600 mt-2">4.2%</p>
-                <p class="text-green-500 text-sm">+1.5% improvement</p>
-            </div>
-        </section>
+        <main class="content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Relatório comercial</p>
+                    <h1>Visão geral de vendas</h1>
+                    <p class="period" id="period-label">Janeiro a dezembro de 2024</p>
+                </div>
+                <div class="avatar" aria-label="Perfil do administrador">AS</div>
+            </header>
 
-        <!-- Simulated monthly sales chart -->
-        <section class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Sales (Simulation)</h2>
-            <div class="grid grid-cols-12 gap-2">
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Jan</p>
-                    <div class="chart-bar mt-2" style="width: 40%;"></div>
+            <form class="filters" id="filters">
+                <div class="field">
+                    <label for="category">Categoria</label>
+                    <select id="category">
+                        <option value="all">Todas as categorias</option>
+                        <option value="livros">Livros</option>
+                        <option value="bolsas">Bolsas</option>
+                        <option value="papelaria">Papelaria</option>
+                    </select>
                 </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Feb</p>
-                    <div class="chart-bar mt-2" style="width: 55%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Mar</p>
-                    <div class="chart-bar mt-2" style="width: 70%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Apr</p>
-                    <div class="chart-bar mt-2" style="width: 80%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">May</p>
-                    <div class="chart-bar mt-2" style="width: 90%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Jun</p>
-                    <div class="chart-bar mt-2" style="width: 95%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Jul</p>
-                    <div class="chart-bar mt-2" style="width: 85%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Aug</p>
-                    <div class="chart-bar mt-2" style="width: 75%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Sep</p>
-                    <div class="chart-bar mt-2" style="width: 60%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Oct</p>
-                    <div class="chart-bar mt-2" style="width: 50%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Nov</p>
-                    <div class="chart-bar mt-2" style="width: 45%;"></div>
-                </div>
-                <div class="col-span-1">
-                    <p class="text-sm font-medium">Dec</p>
-                    <div class="chart-bar mt-2" style="width: 55%;"></div>
-                </div>
+                <div class="field"><label for="start-date">Data inicial</label><input id="start-date" type="date" value="2024-01-01"></div>
+                <div class="field"><label for="end-date">Data final</label><input id="end-date" type="date" value="2024-12-31"></div>
+                <div class="filter-actions"><button class="button button-primary" type="submit">Aplicar filtros</button><button class="button button-quiet" id="clear-filters" type="button">Limpar</button></div>
+            </form>
+
+            <section class="metrics" aria-label="Resumo de vendas">
+                <article class="metric"><span class="metric-label">Vendas totais</span><p class="metric-value" id="total-sales">R$ 0</p><span class="metric-change">Período selecionado</span></article>
+                <article class="metric"><span class="metric-label">Pedidos</span><p class="metric-value" id="total-orders">0</p><span class="metric-change">Pedidos concluídos</span></article>
+                <article class="metric"><span class="metric-label">Ticket médio</span><p class="metric-value" id="average-ticket">R$ 0</p><span class="metric-change">Valor por pedido</span></article>
+                <article class="metric"><span class="metric-label">Categoria líder</span><p class="metric-value" id="top-category">-</p><span class="metric-change">Maior participação</span></article>
+            </section>
+
+            <div class="grid">
+                <section class="panel">
+                    <div class="panel-heading"><div><h2>Evolução das vendas</h2><p class="panel-subtitle">Acompanhamento mensal do faturamento</p></div><span class="legend">Vendas</span></div>
+                    <div class="chart-wrap">
+                        <svg id="sales-chart" viewBox="0 0 760 245" role="img" aria-label="Gráfico de linha das vendas mensais"><defs><linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#24745a" stop-opacity=".2"/><stop offset="1" stop-color="#24745a" stop-opacity="0"/></linearGradient></defs><g id="chart-grid"></g><path id="chart-area" class="chart-area"></path><path id="chart-line" class="chart-line"></path><g id="chart-points"></g><g id="chart-labels"></g></svg>
+                        <p class="empty-chart" id="empty-chart">Nenhuma venda encontrada para este período.</p>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-heading"><div><h2>Por categoria</h2><p class="panel-subtitle">Participação no faturamento</p></div></div>
+                    <div id="category-list"></div>
+                </section>
             </div>
-            <p class="text-sm text-gray-500 mt-4">Note: This is a simulated CSS chart. For real projects, use libraries like Chart.js for dynamic data.</p>
-        </section>
 
-        <!-- Recent transactions table -->
-        <section class="bg-white p-6 rounded-lg shadow-lg">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Recent Transactions</h2>
-            <table class="sales-table w-full">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Customer</th>
-                        <th>Product</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>10/15/2023</td>
-                        <td>João Silva</td>
-                        <td>Gaming Laptop</td>
-                        <td>R$ 5,000</td>
-                        <td class="text-green-500 font-semibold">Completed</td>
-                    </tr>
-                    <tr>
-                        <td>10/14/2023</td>
-                        <td>Maria Oliveira</td>
-                        <td>Smartphone</td>
-                        <td>R$ 3,200</td>
-                        <td class="text-yellow-500 font-semibold">In Progress</td>
-                    </tr>
-                    <tr>
-                        <td>10/13/2023</td>
-                        <td>Carlos Santos</td>
-                        <td>Headphones</td>
-                        <td>R$ 800</td>
-                        <td class="text-green-500 font-semibold">Completed</td>
-                    </tr>
-                    <tr>
-                        <td>10/12/2023</td>
-                        <td>Ana Costa</td>
-                        <td>Tablet</td>
-                        <td>R$ 2,500</td>
-                        <td class="text-red-500 font-semibold">Cancelled</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+            <section class="panel table-panel"><div class="panel-heading"><div><h2>Últimos pedidos</h2><p class="panel-subtitle">Acompanhe as vendas mais recentes</p></div></div><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Categoria</th><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody id="orders-list"></tbody></table></section>
+        </main>
+    </div>
 
-    <!-- Simple footer -->
-    <footer class="bg-gray-800 text-white text-center p-4 mt-8">
-        <p>Hatchards.</p>
-    </footer>
+    <script>
+        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const categoryNames = { livros: 'Livros', bolsas: 'Bolsas', papelaria: 'Papelaria' };
+        const sales = {
+            livros: [18000, 22000, 25000, 27000, 31000, 34000, 29000, 36000, 39000, 42000, 46000, 51000],
+            bolsas: [12000, 15000, 17000, 16000, 21000, 23000, 25000, 22000, 28000, 30000, 33000, 35000],
+            papelaria: [7000, 9000, 11000, 13000, 12000, 15000, 14000, 17000, 18000, 20000, 19000, 24000]
+        };
+        const orders = [
+            ['#4812', 'Mariana Costa', 'Livros', '18/12/2024', 'R$ 486,00'],
+            ['#4811', 'Rafael Mendes', 'Bolsas', '17/12/2024', 'R$ 329,00'],
+            ['#4810', 'Bianca Souza', 'Papelaria', '16/12/2024', 'R$ 187,50'],
+            ['#4809', 'Lucas Almeida', 'Livros', '15/12/2024', 'R$ 742,00']
+        ];
+        const money = value => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+        const monthFromDate = value => value ? new Date(value + 'T00:00:00').getMonth() : 0;
+
+        function renderDashboard() {
+            const category = document.getElementById('category').value;
+            const start = monthFromDate(document.getElementById('start-date').value);
+            const end = monthFromDate(document.getElementById('end-date').value);
+            const firstMonth = Math.min(start, end);
+            const lastMonth = Math.max(start, end);
+            const selectedCategories = category === 'all' ? Object.keys(sales) : [category];
+            const monthly = months.map((_, index) => selectedCategories.reduce((sum, item) => sum + (index >= firstMonth && index <= lastMonth ? sales[item][index] : 0), 0));
+            const total = monthly.reduce((sum, value) => sum + value, 0);
+            const orderCount = Math.round(total / 260);
+            const categoryTotals = Object.keys(sales).map(item => ({ key: item, total: sales[item].slice(firstMonth, lastMonth + 1).reduce((sum, value) => sum + value, 0) })).filter(item => category === 'all' || item.key === category);
+            const leading = categoryTotals.reduce((winner, item) => item.total > winner.total ? item : winner, { total: -1 });
+            document.getElementById('total-sales').textContent = money(total);
+            document.getElementById('total-orders').textContent = orderCount.toLocaleString('pt-BR');
+            document.getElementById('average-ticket').textContent = money(orderCount ? total / orderCount : 0);
+            document.getElementById('top-category').textContent = leading.total > 0 ? categoryNames[leading.key] : '-';
+            document.getElementById('period-label').textContent = `${months[firstMonth]} a ${months[lastMonth]} de 2024`;
+            renderChart(monthly);
+            renderCategories(categoryTotals, total);
+        }
+
+        function renderChart(values) {
+            const chartGrid = document.getElementById('chart-grid');
+            const chartLabels = document.getElementById('chart-labels');
+            const chartPoints = document.getElementById('chart-points');
+            const max = Math.max(...values, 1);
+            const width = 700, baseY = 215, topY = 18;
+            const points = values.map((value, index) => `${50 + index * (width / 11)},${baseY - (value / max) * (baseY - topY)}`);
+            document.getElementById('chart-line').setAttribute('d', `M ${points.join(' L ')}`);
+            document.getElementById('chart-area').setAttribute('d', `M 50 ${baseY} L ${points.join(' L ')} L 750 ${baseY} Z`);
+            chartGrid.innerHTML = [0, .25, .5, .75, 1].map(step => `<line class="grid-line" x1="50" x2="750" y1="${baseY - step * (baseY - topY)}" y2="${baseY - step * (baseY - topY)}"/><text class="y-label" x="0" y="${baseY - step * (baseY - topY) + 4}">${money(max * step)}</text>`).join('');
+            chartLabels.innerHTML = months.map((month, index) => `<text class="x-label" x="${50 + index * (width / 11)}" y="238">${month}</text>`).join('');
+            chartPoints.innerHTML = values.map((value, index) => `<circle class="chart-dot" cx="${50 + index * (width / 11)}" cy="${baseY - (value / max) * (baseY - topY)}" r="4"><title>${months[index]}: ${money(value)}</title></circle>`).join('');
+        }
+
+        function renderCategories(categoryTotals, total) {
+            document.getElementById('category-list').innerHTML = categoryTotals.map(item => `<div class="category-row"><div class="category-top"><strong>${categoryNames[item.key]}</strong><span>${money(item.total)}</span></div><div class="progress"><span style="width:${total ? item.total / total * 100 : 0}%"></span></div></div>`).join('');
+        }
+
+        document.getElementById('filters').addEventListener('submit', event => { event.preventDefault(); renderDashboard(); });
+        document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('category').value = 'all'; document.getElementById('start-date').value = '2024-01-01'; document.getElementById('end-date').value = '2024-12-31'; renderDashboard(); });
+        document.getElementById('orders-list').innerHTML = orders.map(order => `<tr><td>${order[0]}</td><td>${order[1]}</td><td>${order[2]}</td><td>${order[3]}</td><td>${order[4]}</td><td class="status">Concluído</td></tr>`).join('');
+        renderDashboard();
+    </script>
 </body>
 
 </html>

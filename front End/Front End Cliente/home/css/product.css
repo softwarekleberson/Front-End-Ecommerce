@@ -1,115 +1,157 @@
-/* Container principal para os cards */
+/* Product collection */
 #books-container,
 #bags-container {
-  display: flex;
-  flex-wrap: nowrap;
-  /* para manter linha única e permitir scroll horizontal se quiser */
-  gap: 16px;
-  /* espaçamento entre cards */
-  overflow-x: auto;
-  /* barra de rolagem horizontal se necessário */
-  padding: 8px 0;
-  margin-left: 7rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  padding: 8px 7rem;
   margin-top: 3rem;
 }
 
-/* Estilização dos cards */
 .card {
-  flex: 0 0 auto;
-  /* mantém tamanho fixo no flexbox */
-  width: 200px;
-  /* largura fixa para uniformizar */
-  background-color: #fff;
-  border-radius: 6px;
-  padding: 10px;
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(41, 71, 61, 0.12);
+  border-radius: 14px;
+  padding: 7px 12px 11px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  box-shadow: 0 8px 24px rgba(41, 71, 61, 0.08);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
 }
 
-/* Imagem dentro do card */
+.card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(41, 71, 61, 0.28);
+  box-shadow: 0 16px 30px rgba(41, 71, 61, 0.16);
+}
+
 .card__image {
-  width: 200px;
-  height: 200px;
+  width: 100%;
+  height: 220px;
   object-fit: contain;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  background: linear-gradient(145deg, #f4f1f0, #e7eee7);
+  transition: transform 180ms ease;
 }
 
-/* Título */
+.card:hover .card__image {
+  transform: scale(1.03);
+}
+
 .card__title {
-  font-weight: 600;
-  font-size: 12px;
-  color: #000;
-  margin: 0 0 6px 0;
-  min-height: 40px;
-  /* para alinhar cards com títulos maiores */
-}
-
-/* Meta informação (autor/marca) */
-.card__meta {
-  font-size: 12px;
-  color: #555;
-  margin: 0 0 8px 0;
-  min-height: 16px;
-}
-
-/* Preço */
-.card__price {
+  width: 100%;
+  min-height: 42px;
+  margin: 0 0 6px;
+  color: #29473d;
+  font-size: 15px;
   font-weight: 700;
-  font-size: 12px;
-  color: #29473D;
-  margin-bottom: 8px;
+  line-height: 1.35;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-
-/* Descrição (removível se preferir menos texto no card) */
-.card__desc {
+.card__meta {
+  min-height: 18px;
+  max-width: 100%;
+  margin: 0 0 12px;
+  overflow: hidden;
+  color: #6b756d;
   font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  /* opcional: limitar linhas */
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card__price {
+  margin-bottom: 14px;
+  color: #a48847;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.card__desc {
+  margin-bottom: 12px;
+  color: #66716a;
+  font-size: 12px;
+  line-height: 1.5;
   display: -webkit-box;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Botões de ação - pode ocultar se não quiser na visualização */
 .card__actions {
+  width: 100%;
+  margin-top: auto;
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-/* Botões */
 .btn {
-  padding: 6px 12px;
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid #29473d;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #29473d;
   font-size: 12px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
 .btn--primary {
-  background-color: #007bff;
+  background-color: #29473d;
   color: white;
-  border-color: #007bff;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.btn:hover,
+.btn:focus-visible {
+  background-color: #a48847;
+  border-color: #a48847;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
-#books-container,
-#bags-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 16px;
-  padding: 8px 0;
-  margin-left: 7rem;
-  margin-top: 3rem;
+@media (max-width: 768px) {
+  #books-container,
+  #bags-container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 8px 1rem;
+    margin-top: 2rem;
+  }
+
+  .card {
+    padding: 3px 8px 7px;
+    border-radius: 11px;
+  }
+
+  .card__image {
+    height: 160px;
+    margin-bottom: 10px;
+  }
+
+  .card__title {
+    font-size: 13px;
+  }
+
+  .card__price {
+    font-size: 16px;
+  }
 }

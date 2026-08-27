@@ -5,14 +5,14 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="/list-orders/style.css">
-	<title>Orders Delivered</title>
+	<title>Orders in Transit</title>
 </head>
 
 <body>
 	<div class="container">
-		<h1>Orders Delivered</h1>
+		<h1>Orders in Transit</h1>
 
-		<table id="delivered-orders-table">
+		<table id="transit-orders-table">
 			<thead>
 				<tr>
 					<th>Order Code</th>
@@ -21,19 +21,20 @@
 					<th>Status</th>
 					<th>Total</th>
 					<th>Currency</th>
+					<th>Action</th>
 				</tr>
 			</thead>
-			<tbody id="delivered-orders-body">
+			<tbody id="transit-orders-body">
 				<tr><td colspan="6">Loading orders...</td></tr>
 			</tbody>
 		</table>
 	</div>
 
-	<div class="footer" id="total-delivered-orders">
-		<p>Orders delivered: 0</p>
+	<div class="footer" id="total-transit-orders">
+		<p>Orders in transit: 0</p>
 	</div>
 
-	<script src="order/delivered.js"></script>
+	<script src="order/in-transit.js"></script>
 </body>
 
 </html>

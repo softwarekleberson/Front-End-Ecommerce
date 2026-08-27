@@ -1,4 +1,4 @@
-const tableBody = document.getElementById("orders-table-body");
+const ordersSections = document.getElementById("orders-sections");
 const totalOrdersElement = document.getElementById("total-pedidos");
 
 let allOrders = [];
@@ -94,23 +94,66 @@ function createOrderRow(order) {
     return tr;
 }
 
+function getOrderStatus(order) {
+    return String(order.orderStatus ?? order.status ?? "PENDING").trim().toUpperCase() || "PENDING";
+}
+
+function createOrdersTable(status, orders) {
+    const section = document.createElement("section");
+    const title = document.createElement("h2");
+    const table = document.createElement("table");
+
+    title.textContent = `${status} (${orders.length})`;
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Order Code</th>
+                <th>Customer ID</th>
+                <th>Items</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Currency</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    const tableBody = table.querySelector("tbody");
+    orders.forEach((order) => tableBody.appendChild(createOrderRow(order)));
+    section.append(title, table);
+
+    return section;
+}
+
 function renderOrders(orders) {
-    if (!tableBody) {
+    if (!ordersSections) {
         return;
     }
 
-    tableBody.innerHTML = "";
+    ordersSections.innerHTML = "";
 
     if (!Array.isArray(orders) || orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6">No orders found</td></tr>';
+        ordersSections.innerHTML = "<p>No orders found</p>";
         if (totalOrdersElement) {
             totalOrdersElement.innerHTML = "<p>Total Orders: 0</p>";
         }
         return;
     }
 
-    orders.forEach((order) => {
-        tableBody.appendChild(createOrderRow(order));
+    const groupedOrders = orders.reduce((groups, order) => {
+        const status = getOrderStatus(order);
+        (groups[status] ??= []).push(order);
+        return groups;
+    }, {});
+
+    const statusOrder = ["PENDING", "PAY", "SHIP", "CANCEL"];
+    const statuses = [
+        ...statusOrder.filter((status) => groupedOrders[status]),
+        ...Object.keys(groupedOrders).filter((status) => !statusOrder.includes(status))
+    ];
+
+    statuses.forEach((status) => {
+        ordersSections.appendChild(createOrdersTable(status, groupedOrders[status]));
     });
 
     if (totalOrdersElement) {
@@ -123,7 +166,7 @@ async function loadOrders() {
 
     if (!token) {
         alert("Authentication token not found. Please log in again.");
-        window.location.href = "/login.html";
+        window.location.href = "login.html";
         return;
     }
 
@@ -149,8 +192,8 @@ async function loadOrders() {
     } catch (error) {
         console.error("Error loading orders:", error);
 
-        if (tableBody) {
-            tableBody.innerHTML = '<tr><td colspan="6">Error loading orders</td></tr>';
+        if (ordersSections) {
+            ordersSections.innerHTML = "<p>Error loading orders</p>";
         }
 
         if (totalOrdersElement) {

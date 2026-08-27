@@ -63,6 +63,7 @@ document.getElementById("form").addEventListener("submit", async function (event
         }
 
         alert("Address saved successfully!");
+    localStorage.setItem("checkoutAddressUpdated", Date.now().toString());
         document.getElementById("form").reset();
         window.location.href = "/index.html";
 

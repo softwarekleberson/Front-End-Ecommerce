@@ -1,3 +1,9 @@
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
 const form = document.getElementById('productForm');
 const addMidiaBtn = document.getElementById('addMidia');
 const midiasContainer = document.getElementById('midiasContainer');
@@ -42,15 +48,6 @@ form.addEventListener('submit', async (e) => {
     });
 
     console.log("📦 Data prepared for sending:", data);
-
-    // 🔑 Recupera o token salvo no login
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        alert("Authentication token not found. Please log in again.");
-        window.location.href = "/login.html";
-        return;
-    }
 
     try {
         const response = await fetch('http://localhost:8080/adm/product', {

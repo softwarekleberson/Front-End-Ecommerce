@@ -176,6 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addNewCard').addEventListener('click', () => window.open('create-card.html', '_blank'));
     document.getElementById('addNewAddress').addEventListener('click', () => window.open('create-delivery.html', '_blank'));
 
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'checkoutAddressUpdated') {
+            window.location.reload();
+        }
+    });
+
     // Ouvintes para Validação em Tempo Real
     inputs.forEach(input => {
         input.addEventListener('blur', validateForm);

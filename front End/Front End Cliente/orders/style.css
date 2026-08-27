@@ -89,6 +89,11 @@ main {
     gap: 8px;
 }
 
+.product-detail .order-actions {
+    align-items: flex-end;
+    padding-right: 10px;
+}
+
 /* Estilização dos Botões */
 button {
     cursor: pointer;
@@ -112,6 +117,11 @@ button {
 .btn-white {
     background-color: #fff;
     width: 100%;
+}
+
+.product-detail .btn-white {
+    width: 180px;
+    box-sizing: border-box;
 }
 
 .btn-white:hover {

@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "/index.html";
         } catch (error) {
             console.error("Error:", error);
-            alert("Invalid credentials or server error.");
+            alert("Incorrect email or password.");
         }
     });
 });

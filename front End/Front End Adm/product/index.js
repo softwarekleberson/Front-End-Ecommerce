@@ -13,6 +13,24 @@ document.getElementById('addMedia').addEventListener('click', () => {
     container.appendChild(div);
 });
 
+function formatApiError(errorBody, status) {
+    if (!errorBody) return `Error registering the product (HTTP ${status}).`;
+    if (typeof errorBody === 'string') return errorBody;
+
+    if (Array.isArray(errorBody)) {
+        return errorBody.map(error => formatApiError(error, status)).join('\n');
+    }
+
+    if (errorBody.errors && typeof errorBody.errors === 'object') {
+        const fieldErrors = Object.entries(errorBody.errors)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join('\n');
+        if (fieldErrors) return fieldErrors;
+    }
+
+    return errorBody.message || errorBody.error || `Error registering the product (HTTP ${status}).`;
+}
+
 document.getElementById('productForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -62,7 +80,16 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Falha ao enviar: ${response.status}`);
+            const responseText = await response.text();
+            let errorBody = responseText;
+
+            try {
+                errorBody = responseText ? JSON.parse(responseText) : null;
+            } catch {
+                // Keep the plain-text response when it is not JSON.
+            }
+
+            throw new Error(formatApiError(errorBody, response.status));
         }
 
         alert("Product successfully registered!");
@@ -81,6 +108,6 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
     `;
     } catch (error) {
         console.error("Error sending product:", error);
-        alert("Error registering the product. Check the console.");
+        alert(error.message || "Error registering the product.");
     }
 });
