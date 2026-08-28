@@ -1,5 +1,6 @@
 const tableBody = document.getElementById("transit-orders-body");
 const totalTransitOrdersElement = document.getElementById("total-transit-orders");
+const ITEM_STATUS = "SHIPPED";
 
 function normalizeCurrencyCode(currency) {
     const value = String(currency ?? "BRL").trim().toUpperCase();
@@ -33,7 +34,16 @@ function formatCurrency(value, currency) {
     }).format(numericValue);
 }
 
-function formatItems(items, currency) {
+function escapeHtml(value) {
+    return String(value ?? "-")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function formatItems(items) {
     if (!Array.isArray(items) || items.length === 0) {
         return "No items";
     }
@@ -41,8 +51,22 @@ function formatItems(items, currency) {
     return items.map((item) => {
         const productId = item?.productId ?? item?.product?.id ?? "-";
         const quantity = item?.quantity ?? item?.qty ?? item?.amount ?? 0;
-        return `<div><strong>Product:</strong> ${productId} | <strong>Qty:</strong> ${quantity}</div>`;
+        return `<div><strong>Product:</strong> ${escapeHtml(productId)} | <strong>Qty:</strong> ${escapeHtml(quantity)}</div>`;
     }).join("");
+}
+
+function formatDeliveryActions(items, orderId) {
+    if (!Array.isArray(items) || items.length === 0) {
+        return "-";
+    }
+
+    const encodedOrderId = encodeURIComponent(orderId ?? "-");
+    return items.map((item) => {
+        const reservationId = item?.reservationId ?? item?.stockOutId ?? item?.reservation?.id ?? "-";
+        const encodedReservationId = encodeURIComponent(reservationId);
+
+        return `<button type="button" class="delivered-button" data-order-id="${encodedOrderId}" data-reservation-id="${encodedReservationId}"${reservationId === "-" ? " disabled" : ""}>Delivered</button>`;
+    }).join(" ");
 }
 
 function getOrderStatus(order) {
@@ -57,18 +81,18 @@ function createOrderRow(order) {
     row.innerHTML = `
         <td>${order.orderId ?? "-"}</td>
         <td>${order.customerId ?? "-"}</td>
-        <td>${formatItems(items, currency)}</td>
-        <td>${getOrderStatus(order)}</td>
+        <td>${formatItems(items)}</td>
+        <td>${ITEM_STATUS}</td>
         <td>${formatCurrency(order.total ?? 0, currency)}</td>
         <td>${currency}</td>
-        <td><a href="delivered.html" class="delivered-button">Delivered</a></td>
+        <td>${formatDeliveryActions(items, order.orderId)}</td>
     `;
 
     return row;
 }
 
 function renderOrdersInTransit(orders) {
-    const transitOrders = orders.filter((order) => getOrderStatus(order) === "SHIP");
+    const transitOrders = Array.isArray(orders) ? orders : [];
 
     tableBody.innerHTML = transitOrders.length > 0
         ? ""
@@ -78,6 +102,42 @@ function renderOrdersInTransit(orders) {
 
     if (totalTransitOrdersElement) {
         totalTransitOrdersElement.innerHTML = `<p>Orders in transit: ${transitOrders.length}</p>`;
+    }
+}
+
+async function deliverOrder(button) {
+    const orderId = decodeURIComponent(button.dataset.orderId ?? "");
+    const reservationId = decodeURIComponent(button.dataset.reservationId ?? "");
+
+    if (!orderId || !reservationId || orderId === "-" || reservationId === "-") {
+        alert("Order or reservation identifier not found.");
+        return;
+    }
+
+    const token = localStorage.getItem("token");
+    button.disabled = true;
+    button.textContent = "Sending...";
+
+    try {
+        const response = await fetch(`http://localhost:8080/adm/orders/${encodeURIComponent(orderId)}/delivery/${encodeURIComponent(reservationId)}`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const errorBody = await response.text();
+            throw new Error(`Error ${response.status}: ${errorBody || "Unable to deliver order"}`);
+        }
+
+        await loadOrdersInTransit();
+    } catch (error) {
+        console.error("Error delivering order:", error);
+        alert("Unable to deliver order.");
+        button.disabled = false;
+        button.textContent = "Delivered";
     }
 }
 
@@ -91,7 +151,12 @@ async function loadOrdersInTransit() {
     }
 
     try {
-        const response = await fetch("http://localhost:8080/adm/orders?page=0&size=100", {
+        const params = new URLSearchParams({
+            status: ITEM_STATUS,
+            page: "0",
+            size: "100"
+        });
+        const response = await fetch(`http://localhost:8080/adm/orders/itens/delivery?${params}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
                 Accept: "application/json"
@@ -115,3 +180,10 @@ async function loadOrdersInTransit() {
 }
 
 window.addEventListener("DOMContentLoaded", loadOrdersInTransit);
+
+tableBody?.addEventListener("click", (event) => {
+    const button = event.target.closest(".delivered-button");
+    if (button) {
+        deliverOrder(button);
+    }
+});

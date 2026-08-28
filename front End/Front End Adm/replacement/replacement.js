@@ -54,6 +54,7 @@ function renderTable(replacements) {
             <td>${item.reservationId ?? ''}</td>
             <td>${item.reason ?? ''}</td>
             <td>${item.explain ?? ''}</td>
+            <td>${item.quantity ?? ''}</td>
             <td><span class="status-badge status-${item.status}">${item.status ?? ''}</span></td>
             <td>
                 <button onclick="acceptReplacement('${item.reservationId}')" class="btn-accept">Accept</button>
