@@ -26,6 +26,7 @@ document.getElementById("form").addEventListener("submit", async function (event
         });
 
         if (!response.ok) {
+            // Se o problema for falta ou expiração de credencial, limpa e redireciona
             if (response.status === 403 || response.status === 401) {
                 localStorage.removeItem("token");
                 window.location.href = "/login.html";
@@ -50,7 +51,7 @@ document.getElementById("form").addEventListener("submit", async function (event
 
     } catch (error) {
         console.error("Error updating customer:", error);
+        // Exibe o alerta com o erro e mantém o usuário na página atual
         alert(error.message || "Unable to update customer.");
-        window.location.href = "/login.html";
     }
 });
