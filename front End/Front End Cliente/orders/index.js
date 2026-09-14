@@ -137,22 +137,23 @@ function createOrderCard(order) {
             itemsHTML += `
                 <div class="product-detail">
                     <div class="product-text">
-                        <p><strong>Produto:</strong> ${item.productId}</p>
-                        <p><strong>Quantidade:</strong> ${item.quantity}</p>
-                        <p><strong>Preço Unitário:</strong> ${formatCurrency(item.price, order.currency)}</p>
+                        <p><strong>Product:</strong> ${item.productId}</p>
+                        <p><strong>Quantit:</strong> ${item.quantity}</p>
+                        <p><strong>Price:</strong> ${formatCurrency(item.price, order.currency)}</p>
                         <p><strong>Subtotal:</strong> ${formatCurrency(item.subtotal, order.currency)}</p>
+                        <p><strong>Status:</strong> ${item.itemStatus || 'Disponível'}</p>
                         <input type="hidden" class="reservation-id" value="${itemReservationId}" data-reservation-id="${itemReservationId}">
                     </div>
                         <div class="order-actions">
                             <button class="btn-white" type="button">Cancel Item</button>
-                            <button class="btn-white replacement-btn" type="button" data-reservation-id="${itemReservationId}" data-customer-id="${order.customerId || ''}" data-quantity="${item.quantity ?? ''}">Return or Replace Items</button>
+                            <button class="btn-white replacement-btn" type="button" data-order-id="${order.orderId || ''}" data-reservation-id="${itemReservationId}" data-customer-id="${order.customerId || ''}" data-quantity="${item.quantity ?? ''}">Return or Replace Items</button>
                             <button class="btn-white track-package-btn" type="button" data-order-id="${order.orderId}" data-reservation-id="${itemReservationId}">Track Package</button>
                         </div>
                 </div>
             `;
         });
     } else {
-        itemsHTML += '<p>Nenhum item neste pedido</p>';
+        itemsHTML += '<p>Empty Card</p>';
     }
     
     itemsHTML += '</div>';
@@ -168,6 +169,7 @@ function createOrderCard(order) {
     card.querySelectorAll('.replacement-btn').forEach((replacementButton) => {
         replacementButton.addEventListener('click', () => {
             const reservationId = replacementButton.dataset.reservationId || '';
+            const orderId = replacementButton.dataset.orderId || '';
             const orderCard = replacementButton.closest('.order-card');
             const customerId = orderCard?.querySelector('.customer-id')?.value
                 || replacementButton.dataset.customerId
@@ -175,7 +177,8 @@ function createOrderCard(order) {
             const quantity = replacementButton.dataset.quantity || '';
             sessionStorage.setItem('replacementCustomerId', customerId);
             sessionStorage.setItem('replacementQuantity', quantity);
-            window.location.assign(`replacement.html?reservationId=${encodeURIComponent(reservationId)}`);
+            const params = new URLSearchParams({ orderId, reservationId });
+            window.location.assign(`replacement.html?${params.toString()}`);
         });
     });
 

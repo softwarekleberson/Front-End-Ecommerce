@@ -51,6 +51,7 @@ function renderTable(replacements) {
 
         tr.innerHTML = `
             <td>${item.id ?? ''}</td>
+            <td>${item.orderId ?? ''}</td>
             <td>${item.reservationId ?? ''}</td>
             <td>${item.reason ?? ''}</td>
             <td>${item.explain ?? ''}</td>
