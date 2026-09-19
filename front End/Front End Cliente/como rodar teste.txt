@@ -1,0 +1,2 @@
+roda todos os testes
+npx playwright test --headed --workers=1
