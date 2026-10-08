@@ -1,2 +1,6 @@
-roda todos os testes
-npx playwright test --headed --workers=1
+roda todos os testes de cliente
+npx playwright test tests/cliente --headed --workers=1
+
+
+roda o teste de crud (carrinho) e pagamento (cartão, cartão + cartão, cupom e cupom + cartão)
+npx playwright test tests/carrinho/ tests/checkout/ --headed --workers=1
