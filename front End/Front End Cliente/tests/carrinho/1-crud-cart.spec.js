@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 const TEST_USER = {
-  email: process.env.LOGIN_EMAIL || 'charle.silva@email.com',
-  password: process.env.LOGIN_PASSWORD || 'SenhaSegura@123',
+  email: process.env.LOGIN_EMAIL, 
+  password: process.env.LOGIN_PASSWORD,
 };
 
 test.describe('Fluxo do Carrinho de Compras (E2E)', () => {
