@@ -124,7 +124,6 @@ function createOrderCard(order) {
             <div class="order-id">
                 <span>ORDER # ${order.orderId}</span>
             </div>
-            <input type="hidden" name="customerId" class="customer-id" value="${order.customerId || ''}">
         </div>
     `;
     
@@ -146,7 +145,7 @@ function createOrderCard(order) {
                     </div>
                         <div class="order-actions">
                             <button class="btn-white" type="button">Cancel Item</button>
-                            <button class="btn-white replacement-btn" type="button" data-order-id="${order.orderId || ''}" data-reservation-id="${itemReservationId}" data-customer-id="${order.customerId || ''}" data-quantity="${item.quantity ?? ''}">Return or Replace Items</button>
+                            <button class="btn-white replacement-btn" type="button" data-order-id="${order.orderId || ''}" data-reservation-id="${itemReservationId}" data-quantity="${item.quantity ?? ''}">Return or Replace Items</button>
                             <button class="btn-white track-package-btn" type="button" data-order-id="${order.orderId}" data-reservation-id="${itemReservationId}">Track Package</button>
                         </div>
                 </div>
@@ -170,12 +169,7 @@ function createOrderCard(order) {
         replacementButton.addEventListener('click', () => {
             const reservationId = replacementButton.dataset.reservationId || '';
             const orderId = replacementButton.dataset.orderId || '';
-            const orderCard = replacementButton.closest('.order-card');
-            const customerId = orderCard?.querySelector('.customer-id')?.value
-                || replacementButton.dataset.customerId
-                || '';
             const quantity = replacementButton.dataset.quantity || '';
-            sessionStorage.setItem('replacementCustomerId', customerId);
             sessionStorage.setItem('replacementQuantity', quantity);
             const params = new URLSearchParams({ orderId, reservationId });
             window.location.assign(`replacement.html?${params.toString()}`);

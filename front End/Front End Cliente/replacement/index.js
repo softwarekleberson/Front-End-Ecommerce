@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const reservationInput = document.getElementById('reservationId');
     const orderIdInput = document.getElementById('orderId');
-    const customerIdInput = document.getElementById('customerId');
     const quantityInput = document.getElementById('quantity');
     const params = new URLSearchParams(window.location.search);
     const orderFromUrl = params.get('orderId');
@@ -32,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (orderFromUrl && orderIdInput) {
         orderIdInput.value = orderFromUrl;
     }
-    if (customerIdInput) customerIdInput.value = sessionStorage.getItem('replacementCustomerId') || '';
     if (quantityInput) {
         quantityInput.value = Number.isInteger(purchasedQuantity) && purchasedQuantity > 0
             ? purchasedQuantity
@@ -47,12 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const reservationId = document.getElementById('reservationId')?.value.trim();
         const orderId = orderIdInput?.value.trim();
-        const customerId = customerIdInput?.value.trim();
         const quantity = Number(quantityInput?.value);
         const reason = document.getElementById('reason')?.value;
         const explain = document.getElementById('explain')?.value.trim();
 
-        if (!orderId || !reservationId || !customerId || !Number.isInteger(quantity) || quantity < 1 || !reason || !explain) {
+        if (!orderId || !reservationId || !Number.isInteger(quantity) || quantity < 1 || !reason || !explain) {
             showStatus('Please fill in all fields before submitting.', true);
             return;
         }
@@ -65,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const payload = {
             orderId,
             reservationId,
-            customerId,
             quantity,
             reason,
             explain
