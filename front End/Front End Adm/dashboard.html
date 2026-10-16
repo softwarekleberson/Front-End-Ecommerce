@@ -45,7 +45,10 @@
         .button { height: 39px; padding: 0 18px; border: 0; border-radius: 3px; cursor: pointer; font: 12px Arial, sans-serif; }
         .button-primary { color: #fff; background: var(--green); }
         .button-primary:hover { background: #1b5e48; }
+        .button:disabled { cursor: wait; opacity: .65; }
         .button-quiet { color: var(--muted); background: transparent; border: 1px solid #d5dfd9; }
+        .feedback { min-height: 20px; margin: -13px 0 18px; color: var(--muted); font: 13px Arial, sans-serif; }
+        .feedback.error { color: #a43d32; }
         .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
         .metric { padding: 20px; background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
         .metric-label { color: var(--muted); font: 11px Arial, sans-serif; letter-spacing: .8px; text-transform: uppercase; }
@@ -104,7 +107,7 @@
                 <div>
                     <p class="eyebrow">Relatório comercial</p>
                     <h1>Visão geral de vendas</h1>
-                    <p class="period" id="period-label">Janeiro a dezembro de 2024</p>
+                    <p class="period" id="period-label">Carregando período...</p>
                 </div>
                 <div class="avatar" aria-label="Perfil do administrador">AS</div>
             </header>
@@ -114,15 +117,13 @@
                     <label for="category">Categoria</label>
                     <select id="category">
                         <option value="all">Todas as categorias</option>
-                        <option value="livros">Livros</option>
-                        <option value="bolsas">Bolsas</option>
-                        <option value="papelaria">Papelaria</option>
                     </select>
                 </div>
-                <div class="field"><label for="start-date">Data inicial</label><input id="start-date" type="date" value="2024-01-01"></div>
-                <div class="field"><label for="end-date">Data final</label><input id="end-date" type="date" value="2024-12-31"></div>
+                <div class="field"><label for="start-date">Data inicial</label><input id="start-date" type="date"></div>
+                <div class="field"><label for="end-date">Data final</label><input id="end-date" type="date"></div>
                 <div class="filter-actions"><button class="button button-primary" type="submit">Aplicar filtros</button><button class="button button-quiet" id="clear-filters" type="button">Limpar</button></div>
             </form>
+            <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
 
             <section class="metrics" aria-label="Resumo de vendas">
                 <article class="metric"><span class="metric-label">Vendas totais</span><p class="metric-value" id="total-sales">R$ 0</p><span class="metric-change">Período selecionado</span></article>
@@ -150,65 +151,225 @@
     </div>
 
     <script>
-        const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const categoryNames = { livros: 'Livros', bolsas: 'Bolsas', papelaria: 'Papelaria' };
-        const sales = {
-            livros: [18000, 22000, 25000, 27000, 31000, 34000, 29000, 36000, 39000, 42000, 46000, 51000],
-            bolsas: [12000, 15000, 17000, 16000, 21000, 23000, 25000, 22000, 28000, 30000, 33000, 35000],
-            papelaria: [7000, 9000, 11000, 13000, 12000, 15000, 14000, 17000, 18000, 20000, 19000, 24000]
-        };
-        const orders = [
-            ['#4812', 'Mariana Costa', 'Livros', '18/12/2024', 'R$ 486,00'],
-            ['#4811', 'Rafael Mendes', 'Bolsas', '17/12/2024', 'R$ 329,00'],
-            ['#4810', 'Bianca Souza', 'Papelaria', '16/12/2024', 'R$ 187,50'],
-            ['#4809', 'Lucas Almeida', 'Livros', '15/12/2024', 'R$ 742,00']
-        ];
-        const money = value => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
-        const monthFromDate = value => value ? new Date(value + 'T00:00:00').getMonth() : 0;
+        const apiUrl = 'http://localhost:8080/adm/dashboard/sales';
+        const money = value => Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const number = value => Number(value || 0).toLocaleString('pt-BR');
+        const categoryLabels = { livros: 'Livros', livro: 'Livros', books: 'Livros', book: 'Livros', bolsas: 'Bolsas', bolsa: 'Bolsas', bags: 'Bolsas', bag: 'Bolsas', papelaria: 'Papelaria', stationery: 'Papelaria' };
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const categorySelect = document.getElementById('category');
+        const feedback = document.getElementById('feedback');
+        const svgNamespace = 'http://www.w3.org/2000/svg';
 
-        function renderDashboard() {
-            const category = document.getElementById('category').value;
-            const start = monthFromDate(document.getElementById('start-date').value);
-            const end = monthFromDate(document.getElementById('end-date').value);
-            const firstMonth = Math.min(start, end);
-            const lastMonth = Math.max(start, end);
-            const selectedCategories = category === 'all' ? Object.keys(sales) : [category];
-            const monthly = months.map((_, index) => selectedCategories.reduce((sum, item) => sum + (index >= firstMonth && index <= lastMonth ? sales[item][index] : 0), 0));
-            const total = monthly.reduce((sum, value) => sum + value, 0);
-            const orderCount = Math.round(total / 260);
-            const categoryTotals = Object.keys(sales).map(item => ({ key: item, total: sales[item].slice(firstMonth, lastMonth + 1).reduce((sum, value) => sum + value, 0) })).filter(item => category === 'all' || item.key === category);
-            const leading = categoryTotals.reduce((winner, item) => item.total > winner.total ? item : winner, { total: -1 });
-            document.getElementById('total-sales').textContent = money(total);
-            document.getElementById('total-orders').textContent = orderCount.toLocaleString('pt-BR');
-            document.getElementById('average-ticket').textContent = money(orderCount ? total / orderCount : 0);
-            document.getElementById('top-category').textContent = leading.total > 0 ? categoryNames[leading.key] : '-';
-            document.getElementById('period-label').textContent = `${months[firstMonth]} a ${months[lastMonth]} de 2024`;
-            renderChart(monthly);
-            renderCategories(categoryTotals, total);
+        function formatCategory(value) {
+            const raw = String(value || '-');
+            const normalized = raw.toLowerCase().replaceAll('_', ' ').trim();
+            return categoryLabels[normalized] || normalized.replace(/\b\w/g, character => character.toUpperCase());
         }
 
-        function renderChart(values) {
+        function formatDate(value) {
+            if (!value) return '-';
+            const date = new Date(`${String(value).slice(0, 10)}T00:00:00`);
+            return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString('pt-BR');
+        }
+
+        function valueFrom(item, keys, fallback = '-') {
+            for (const key of keys) {
+                if (item?.[key] !== undefined && item[key] !== null && item[key] !== '') return item[key];
+            }
+            return fallback;
+        }
+
+        function updateCategories(categories, selected) {
+            const options = [new Option('Todas as categorias', 'all')];
+            [...new Set(categories || [])].forEach(category => options.push(new Option(formatCategory(category), category)));
+            categorySelect.replaceChildren(...options);
+            categorySelect.value = categories?.includes(selected) ? selected : 'all';
+        }
+
+        function appendSvg(parent, tag, attributes, text) {
+            const element = document.createElementNS(svgNamespace, tag);
+            Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+            if (text !== undefined) element.textContent = text;
+            parent.append(element);
+            return element;
+        }
+
+        function renderChart(points) {
             const chartGrid = document.getElementById('chart-grid');
             const chartLabels = document.getElementById('chart-labels');
             const chartPoints = document.getElementById('chart-points');
+            const chartLine = document.getElementById('chart-line');
+            const chartArea = document.getElementById('chart-area');
+            const emptyChart = document.getElementById('empty-chart');
+            [chartGrid, chartLabels, chartPoints].forEach(element => element.replaceChildren());
+            chartLine.setAttribute('d', '');
+            chartArea.setAttribute('d', '');
+
+            const monthly = new Map();
+            (points || []).forEach(point => monthly.set(point.month, (monthly.get(point.month) || 0) + Number(point.total || 0)));
+            const entries = [...monthly.entries()];
+            const values = entries.map(([, total]) => total);
+            if (!entries.length || values.every(value => value === 0)) {
+                emptyChart.style.display = 'block';
+                return;
+            }
+            emptyChart.style.display = 'none';
+
             const max = Math.max(...values, 1);
             const width = 700, baseY = 215, topY = 18;
-            const points = values.map((value, index) => `${50 + index * (width / 11)},${baseY - (value / max) * (baseY - topY)}`);
-            document.getElementById('chart-line').setAttribute('d', `M ${points.join(' L ')}`);
-            document.getElementById('chart-area').setAttribute('d', `M 50 ${baseY} L ${points.join(' L ')} L 750 ${baseY} Z`);
-            chartGrid.innerHTML = [0, .25, .5, .75, 1].map(step => `<line class="grid-line" x1="50" x2="750" y1="${baseY - step * (baseY - topY)}" y2="${baseY - step * (baseY - topY)}"/><text class="y-label" x="0" y="${baseY - step * (baseY - topY) + 4}">${money(max * step)}</text>`).join('');
-            chartLabels.innerHTML = months.map((month, index) => `<text class="x-label" x="${50 + index * (width / 11)}" y="238">${month}</text>`).join('');
-            chartPoints.innerHTML = values.map((value, index) => `<circle class="chart-dot" cx="${50 + index * (width / 11)}" cy="${baseY - (value / max) * (baseY - topY)}" r="4"><title>${months[index]}: ${money(value)}</title></circle>`).join('');
+            const coordinates = values.map((value, index) => ({
+                x: 50 + index * (width / Math.max(entries.length - 1, 1)),
+                y: baseY - (value / max) * (baseY - topY)
+            }));
+            const linePath = coordinates.map(point => `${point.x},${point.y}`).join(' L ');
+            chartLine.setAttribute('d', `M ${linePath}`);
+            chartArea.setAttribute('d', `M ${coordinates[0].x} ${baseY} L ${linePath} L ${coordinates[coordinates.length - 1].x} ${baseY} Z`);
+
+            [0, .25, .5, .75, 1].forEach(step => {
+                const y = baseY - step * (baseY - topY);
+                appendSvg(chartGrid, 'line', { class: 'grid-line', x1: 50, x2: 750, y1: y, y2: y });
+                appendSvg(chartGrid, 'text', { class: 'y-label', x: 0, y: y + 4 }, money(max * step));
+            });
+            const labelEvery = Math.max(1, Math.ceil(entries.length / 12));
+            entries.forEach(([month], index) => {
+                const label = /^\d{4}-\d{2}/.test(month)
+                    ? `${monthNames[Number(month.slice(5, 7)) - 1] || month} ${month.slice(0, 4)}`
+                    : String(month);
+                if (index % labelEvery === 0 || index === entries.length - 1) {
+                    appendSvg(chartLabels, 'text', { class: 'x-label', x: coordinates[index].x, y: 238 }, label);
+                }
+                const dot = appendSvg(chartPoints, 'circle', { class: 'chart-dot', cx: coordinates[index].x, cy: coordinates[index].y, r: 4 });
+                appendSvg(dot, 'title', {}, `${label}: ${money(values[index])}`);
+            });
         }
 
-        function renderCategories(categoryTotals, total) {
-            document.getElementById('category-list').innerHTML = categoryTotals.map(item => `<div class="category-row"><div class="category-top"><strong>${categoryNames[item.key]}</strong><span>${money(item.total)}</span></div><div class="progress"><span style="width:${total ? item.total / total * 100 : 0}%"></span></div></div>`).join('');
+        function renderCategories(points, total) {
+            const totals = new Map();
+            (points || []).forEach(point => totals.set(point.category, (totals.get(point.category) || 0) + Number(point.total || 0)));
+            const list = document.getElementById('category-list');
+            list.replaceChildren();
+            [...totals.entries()].sort((left, right) => right[1] - left[1]).forEach(([category, amount]) => {
+                const row = document.createElement('div');
+                row.className = 'category-row';
+                const top = document.createElement('div');
+                top.className = 'category-top';
+                const name = document.createElement('strong');
+                name.textContent = formatCategory(category);
+                const value = document.createElement('span');
+                value.textContent = money(amount);
+                top.append(name, value);
+                const progress = document.createElement('div');
+                progress.className = 'progress';
+                const bar = document.createElement('span');
+                bar.style.width = `${Math.min(total ? amount / total * 100 : 0, 100)}%`;
+                progress.append(bar);
+                row.append(top, progress);
+                list.append(row);
+            });
         }
 
-        document.getElementById('filters').addEventListener('submit', event => { event.preventDefault(); renderDashboard(); });
-        document.getElementById('clear-filters').addEventListener('click', () => { document.getElementById('category').value = 'all'; document.getElementById('start-date').value = '2024-01-01'; document.getElementById('end-date').value = '2024-12-31'; renderDashboard(); });
-        document.getElementById('orders-list').innerHTML = orders.map(order => `<tr><td>${order[0]}</td><td>${order[1]}</td><td>${order[2]}</td><td>${order[3]}</td><td>${order[4]}</td><td class="status">Concluído</td></tr>`).join('');
-        renderDashboard();
+        function renderOrders(orders) {
+            const body = document.getElementById('orders-list');
+            body.replaceChildren();
+            (orders || []).forEach(order => {
+                const row = document.createElement('tr');
+                const cells = [
+                    valueFrom(order, ['orderId', 'id', 'code', 'number']),
+                    valueFrom(order, ['customerName', 'customer', 'name']),
+                    formatCategory(valueFrom(order, ['category'])),
+                    formatDate(valueFrom(order, ['date', 'orderDate', 'createdAt'], '')),
+                    money(valueFrom(order, ['value', 'total', 'totalAmount', 'amount'], 0)),
+                    valueFrom(order, ['status', 'orderStatus'], '-')
+                ];
+                cells.forEach((value, index) => {
+                    const cell = document.createElement('td');
+                    cell.textContent = String(value);
+                    if (index === cells.length - 1) cell.className = 'status';
+                    row.append(cell);
+                });
+                body.append(row);
+            });
+        }
+
+        async function loadDashboard() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const selectedCategory = categorySelect.value;
+            const button = document.querySelector('.button-primary');
+            if (!startDate || !endDate) {
+                feedback.textContent = 'Informe as datas inicial e final.';
+                feedback.className = 'feedback error';
+                return;
+            }
+            if (startDate > endDate) {
+                feedback.textContent = 'A data inicial deve ser anterior ou igual à data final.';
+                feedback.className = 'feedback error';
+                return;
+            }
+
+            const params = new URLSearchParams({ startDate, endDate });
+            if (selectedCategory !== 'all') params.set('category', selectedCategory);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            button.disabled = true;
+            feedback.textContent = 'Carregando dados de vendas...';
+            feedback.className = 'feedback';
+            try {
+                const response = await fetch(`${apiUrl}?${params}`, {
+                    headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
+                    cache: 'no-store'
+                });
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem('token');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const dashboard = await response.json();
+                const categories = dashboard.categories || (dashboard.categoryRevenue || []).map(point => point.category);
+                updateCategories(categories, selectedCategory);
+                document.getElementById('total-sales').textContent = money(dashboard.totalSales);
+                document.getElementById('total-orders').textContent = number(dashboard.totalOrders);
+                document.getElementById('average-ticket').textContent = money(dashboard.averageTicket);
+                document.getElementById('top-category').textContent = formatCategory(dashboard.leadingCategory);
+                document.getElementById('period-label').textContent = `${formatDate(dashboard.startDate)} a ${formatDate(dashboard.endDate)}`;
+                renderChart(dashboard.salesEvolution);
+                renderCategories(dashboard.categoryRevenue, Number(dashboard.totalSales || 0));
+                const recentOrders = dashboard.recentOrders || [];
+                renderOrders(recentOrders);
+                feedback.textContent = Number(dashboard.totalOrders || 0) === 0 && recentOrders.length > 0
+                    ? 'Há pedidos no período, mas nenhum está pago para compor o faturamento.'
+                    : '';
+            } catch (error) {
+                feedback.textContent = `Não foi possível carregar o dashboard. Verifique se a API está disponível e tente novamente. (${error.message})`;
+                feedback.className = 'feedback error';
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        function localDateString(date) {
+            const offset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - offset).toISOString().slice(0, 10);
+        }
+
+        const today = new Date();
+        document.getElementById('start-date').value = `${today.getFullYear()}-01-01`;
+        document.getElementById('end-date').value = localDateString(today);
+        document.getElementById('filters').addEventListener('submit', event => {
+            event.preventDefault();
+            loadDashboard();
+        });
+        document.getElementById('clear-filters').addEventListener('click', () => {
+            categorySelect.value = 'all';
+            document.getElementById('start-date').value = `${today.getFullYear()}-01-01`;
+            document.getElementById('end-date').value = localDateString(new Date());
+            loadDashboard();
+        });
+        loadDashboard();
     </script>
 </body>
 
