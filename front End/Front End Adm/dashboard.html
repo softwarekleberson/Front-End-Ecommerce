@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de vendas | Hatchards</title>
+    <title>Sales Dashboard | Hatchards</title>
     <style>
         :root {
             --ink: #17231f;
@@ -92,61 +92,61 @@
     <div class="app-shell">
         <aside class="sidebar">
             <p class="brand">Hatchards<span>.</span></p>
-            <span class="nav-label">Menu principal</span>
-            <nav class="nav" aria-label="Menu principal">
-                <a class="active" href="dashboard.html">Visão geral</a>
-                <a href="list-orders.html">Pedidos</a>
-                <a href="stock.html">Estoque</a>
-                <a href="list-customer.html">Clientes</a>
+            <span class="nav-label">Main menu</span>
+            <nav class="nav" aria-label="Main menu">
+                <a class="active" href="dashboard.html">Overview</a>
+                <a href="list-orders.html">Orders</a>
+                <a href="stock.html">Inventory</a>
+                <a href="list-customer.html">Customers</a>
             </nav>
-            <p class="sidebar-note">Painel administrativo<br>Atualizado em tempo real</p>
+            <p class="sidebar-note">Administration panel<br>Updated in real time</p>
         </aside>
 
         <main class="content">
             <header class="topbar">
                 <div>
-                    <p class="eyebrow">Relatório comercial</p>
-                    <h1>Visão geral de vendas</h1>
-                    <p class="period" id="period-label">Carregando período...</p>
+                    <p class="eyebrow">Sales report</p>
+                    <h1>Sales overview</h1>
+                    <p class="period" id="period-label">Loading period...</p>
                 </div>
-                <div class="avatar" aria-label="Perfil do administrador">AS</div>
+                <div class="avatar" aria-label="Administrator profile">AS</div>
             </header>
 
             <form class="filters" id="filters">
                 <div class="field">
-                    <label for="category">Categoria</label>
+                    <label for="category">Category</label>
                     <select id="category">
-                        <option value="all">Todas as categorias</option>
+                        <option value="all">All categories</option>
                     </select>
                 </div>
-                <div class="field"><label for="start-date">Data inicial</label><input id="start-date" type="date"></div>
-                <div class="field"><label for="end-date">Data final</label><input id="end-date" type="date"></div>
-                <div class="filter-actions"><button class="button button-primary" type="submit">Aplicar filtros</button><button class="button button-quiet" id="clear-filters" type="button">Limpar</button></div>
+                <div class="field"><label for="start-date">Start date</label><input id="start-date" type="date"></div>
+                <div class="field"><label for="end-date">End date</label><input id="end-date" type="date"></div>
+                <div class="filter-actions"><button class="button button-primary" type="submit">Apply filters</button><button class="button button-quiet" id="clear-filters" type="button">Clear</button></div>
             </form>
             <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
 
-            <section class="metrics" aria-label="Resumo de vendas">
-                <article class="metric"><span class="metric-label">Vendas totais</span><p class="metric-value" id="total-sales">R$ 0</p><span class="metric-change">Período selecionado</span></article>
-                <article class="metric"><span class="metric-label">Pedidos</span><p class="metric-value" id="total-orders">0</p><span class="metric-change">Pedidos concluídos</span></article>
-                <article class="metric"><span class="metric-label">Ticket médio</span><p class="metric-value" id="average-ticket">R$ 0</p><span class="metric-change">Valor por pedido</span></article>
-                <article class="metric"><span class="metric-label">Categoria líder</span><p class="metric-value" id="top-category">-</p><span class="metric-change">Maior participação</span></article>
+            <section class="metrics" aria-label="Sales summary">
+                <article class="metric"><span class="metric-label">Total sales</span><p class="metric-value" id="total-sales">R$ 0</p><span class="metric-change">Selected period</span></article>
+                <article class="metric"><span class="metric-label">Orders</span><p class="metric-value" id="total-orders">0</p><span class="metric-change">Completed orders</span></article>
+                <article class="metric"><span class="metric-label">Average order value</span><p class="metric-value" id="average-ticket">R$ 0</p><span class="metric-change">Value per order</span></article>
+                <article class="metric"><span class="metric-label">Top category</span><p class="metric-value" id="top-category">-</p><span class="metric-change">Largest share</span></article>
             </section>
 
             <div class="grid">
                 <section class="panel">
-                    <div class="panel-heading"><div><h2>Evolução das vendas</h2><p class="panel-subtitle">Acompanhamento mensal do faturamento</p></div><span class="legend">Vendas</span></div>
+                    <div class="panel-heading"><div><h2>Sales trends</h2><p class="panel-subtitle">Monthly sales tracking</p></div><span class="legend">Sales</span></div>
                     <div class="chart-wrap">
-                        <svg id="sales-chart" viewBox="0 0 760 245" role="img" aria-label="Gráfico de linha das vendas mensais"><defs><linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#24745a" stop-opacity=".2"/><stop offset="1" stop-color="#24745a" stop-opacity="0"/></linearGradient></defs><g id="chart-grid"></g><path id="chart-area" class="chart-area"></path><path id="chart-line" class="chart-line"></path><g id="chart-points"></g><g id="chart-labels"></g></svg>
-                        <p class="empty-chart" id="empty-chart">Nenhuma venda encontrada para este período.</p>
+                        <svg id="sales-chart" viewBox="0 0 760 245" role="img" aria-label="Monthly sales line chart"><defs><linearGradient id="areaFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#24745a" stop-opacity=".2"/><stop offset="1" stop-color="#24745a" stop-opacity="0"/></linearGradient></defs><g id="chart-grid"></g><path id="chart-area" class="chart-area"></path><path id="chart-line" class="chart-line"></path><g id="chart-points"></g><g id="chart-labels"></g></svg>
+                        <p class="empty-chart" id="empty-chart">No sales found for this period.</p>
                     </div>
                 </section>
                 <section class="panel">
-                    <div class="panel-heading"><div><h2>Por categoria</h2><p class="panel-subtitle">Participação no faturamento</p></div></div>
+                    <div class="panel-heading"><div><h2>By category</h2><p class="panel-subtitle">Revenue participation</p></div></div>
                     <div id="category-list"></div>
                 </section>
             </div>
 
-            <section class="panel table-panel"><div class="panel-heading"><div><h2>Últimos pedidos</h2><p class="panel-subtitle">Acompanhe as vendas mais recentes</p></div></div><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Categoria</th><th>Data</th><th>Valor</th><th>Status</th></tr></thead><tbody id="orders-list"></tbody></table></section>
+            <section class="panel table-panel"><div class="panel-heading"><div><h2>Recent orders</h2><p class="panel-subtitle">Track the most recent sales</p></div></div><table><thead><tr><th>Order</th><th>Customer</th><th>Category</th><th>Date</th><th>Value</th><th>Status</th></tr></thead><tbody id="orders-list"></tbody></table></section>
         </main>
     </div>
 
